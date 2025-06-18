@@ -4,7 +4,7 @@ from Primer_functions import *
 import primer3
 
 
-def Fetch_SNP_Data():
+def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800): #  -> pd.DataFrame
     """
         Fetch SNP data from dbSNP (mocked for demo).
         TODO: Replace with real Entrez/API call to fetch rsIDs, alleles, and flanking sequences from dbSNP.
