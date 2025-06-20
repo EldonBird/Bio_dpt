@@ -7,15 +7,18 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
 }</component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
   <component name="CMakeRunConfigurationManager">
-    <generated>
-      <config projectName="Bio_dpt" targetName="Bio_dpt" />
-    </generated>
+    <generated />
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -24,17 +27,137 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce87fcd0-412b-4419-8d75-1484064ee61e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pcr_lib.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pcr_lib.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Bio_dpt.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Bio_dpt.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ALL_BUILD.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/ALL_BUILD.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ALL_BUILD.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/ALL_BUILD.vcxproj.filters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/.d.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/.d.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.exe.recipe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.exe.recipe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.ilk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Bio_dpt.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Bio_dpt.lastbuildstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CL.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Cl.items.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Cl.items.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CustomBuild.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CustomBuild.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CustomBuild.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CustomBuild.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CustomBuild.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/CustomBuild.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Microsoft.Build.CPPTasks.CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Microsoft.Build.CPPTasks.CL.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Microsoft.Build.CPPTasks.CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/Microsoft.Build.CPPTasks.CL.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.secondary.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.secondary.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt.tlog/link.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt_MD.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt_MD.tlog/CL.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt_MD.tlog/Microsoft.Build.CPPTasks.CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt_MD.tlog/Microsoft.Build.CPPTasks.CL.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/Bio_dpt_MD.tlog/Microsoft.Build.CPPTasks.CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/Bio_dpt_MD.tlog/Microsoft.Build.CPPTasks.CL.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/main.cpp.module.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/main.cpp.module.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/main.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/main.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.dir/Debug/vc143.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.dir/Debug/vc143.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.sln" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Bio_dpt.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Bio_dpt.vcxproj.filters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CMakeCCompiler.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CMakeCCompiler.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CMakeCXXCompiler.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CMakeCXXCompiler.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CMakeRCCompiler.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CMakeRCCompiler.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CMakeSystem.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CMakeSystem.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/CMakeCCompilerId.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/CompilerIdC.exe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/CompilerIdC.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/CompilerIdC.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/CompilerIdC.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CMakeCCompilerId.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CMakeCCompilerId.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.exe.recipe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.exe.recipe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CL.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CL.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CL.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/Cl.items.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/Cl.items.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CompilerIdC.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/CompilerIdC.lastbuildstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.secondary.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.secondary.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdC/Debug/CompilerIdC.tlog/link.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/CMakeCXXCompilerId.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/CompilerIdCXX.exe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/CompilerIdCXX.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/CompilerIdCXX.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/CompilerIdCXX.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CMakeCXXCompilerId.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CMakeCXXCompilerId.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.exe.recipe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.exe.recipe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CL.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CL.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CL.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/Cl.items.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/Cl.items.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CompilerIdCXX.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/CompilerIdCXX.lastbuildstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.secondary.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.secondary.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/CompilerIdCXX/Debug/CompilerIdCXX.tlog/link.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/VCTargetsPath.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/VCTargetsPath.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/VCTargetsPath.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/VCTargetsPath.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/VCTargetsPath/x64/Debug/VCTargetsPath.recipe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/VCTargetsPath/x64/Debug/VCTargetsPath.recipe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/4.0.3/VCTargetsPath/x64/Debug/VCTargetsPath.tlog/VCTargetsPath.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/4.0.3/VCTargetsPath/x64/Debug/VCTargetsPath.tlog/VCTargetsPath.lastbuildstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/CMakeConfigureLog.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/InstallScripts.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/InstallScripts.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/cmake.check_cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/cmake.check_cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/ded25564c920a8cae3f2a6414561ef93/generate.stamp.rule" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/ded25564c920a8cae3f2a6414561ef93/generate.stamp.rule" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/generate.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/generate.stamp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/generate.stamp.depend" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/generate.stamp.depend" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/generate.stamp.list" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/CMakeFiles/generate.stamp.list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Debug/Bio_dpt.exe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Debug/Bio_dpt.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Debug/Bio_dpt.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/Debug/Bio_dpt.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ZERO_CHECK.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/ZERO_CHECK.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ZERO_CHECK.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/ZERO_CHECK.vcxproj.filters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/lib.win-amd64-cpython-312/pcr_lib.cp312-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/lib.win-amd64-cpython-312/pcr_lib.cp312-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/temp.win-amd64-cpython-312/Release/src/pcr_lib.cp312-win_amd64.exp" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/temp.win-amd64-cpython-312/Release/src/pcr_lib.cp312-win_amd64.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/temp.win-amd64-cpython-312/Release/src/pcr_lib.cp312-win_amd64.lib" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/temp.win-amd64-cpython-312/Release/src/pcr_lib.cp312-win_amd64.lib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/temp.win-amd64-cpython-312/Release/src/pcr_lib.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/temp.win-amd64-cpython-312/Release/src/pcr_lib.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ALL_BUILD/ALL_BUILD.recipe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ALL_BUILD/ALL_BUILD.recipe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/ALL_BUILD.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/ALL_BUILD.lastbuildstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.recipe" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.recipe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/CustomBuild.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/ZERO_CHECK.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/ZERO_CHECK.lastbuildstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/query/cache-v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/query/cmakeFiles-v1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/query/codemodel-v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/query/toolchains-v1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/cache-v2-e67c1b5fb97d14d0b923.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-53a9c966a4332ed6ef8f.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-252c4e7c557fb10fb1f0.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/directory-.-Debug-d0094a50bb2071803777.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/index-2025-06-20T04-57-35-0329.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/target-Bio_dpt-Debug-72465487d3c21b49ef9a.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/toolchains-v1-75554fd33c4c38434c2c.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CompilerIdC/a.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CompilerIdCXX/a.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-environment.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/rules.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/build.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pcr_lib.cp312-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pcr_lib.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/pcr_lib.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,19 +207,29 @@
     &quot;Python.Multiplex.executor&quot;: &quot;Run&quot;,
     &quot;Python.Unnamed.executor&quot;: &quot;Run&quot;,
     &quot;Python.sadie_main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;cpplib&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="CMake Application.Bio_dpt">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Bio_dpt" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Bio_dpt" TARGET_NAME="Bio_dpt" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Bio_dpt" RUN_TARGET_NAME="Bio_dpt">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Projects\My software\Bio_dpt\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -124,9 +257,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <list>
-      <item itemvalue="CMake Application.Bio_dpt" />
-    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -144,10 +274,16 @@
       <option name="presentableId" value="Default" />
       <updated>1750393600583</updated>
       <workItem from="1750393602584" duration="1211000" />
+      <workItem from="1750441068086" duration="2236000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
   </component>
 </project>

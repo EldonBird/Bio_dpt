@@ -5,7 +5,10 @@
 import pcr_lib as pl
 
 
-print(pl.add(2, 3))
+
+testvar = "ATGA"
+
+print(pl.reverse_complement(testvar))
 
 
 
@@ -15,7 +18,7 @@ print(pl.add(2, 3))
 
 
 
-def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800): #  -> pd.DataFrame
+def Fetch_SNP_Data(rsids: list[str], flank_length: int = 800): #  -> pd.DataFrame
     """
         Fetch SNP data from dbSNP (mocked for demo).
         TODO: Replace with real Entrez/API call to fetch rsIDs, alleles, and flanking sequences from dbSNP.
