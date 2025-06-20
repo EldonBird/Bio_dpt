@@ -1,7 +1,18 @@
-from Multiplex import *
-from Output import *
-from Primer_functions import *
-import primer3
+# from Multiplex import *
+# from Output import *
+# from Primer_functions import *
+# import primer3
+import pcr_lib as pl
+
+
+print(pl.add(2, 3))
+
+
+
+
+
+
+
 
 
 def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800): #  -> pd.DataFrame
@@ -27,9 +38,3 @@ def Main():
         - Benchmark performance for large SNP sets.
         """
 
-
-
-
-
-if(__name__ == "__main__"):
-    Main()
