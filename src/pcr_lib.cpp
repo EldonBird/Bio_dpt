@@ -41,7 +41,64 @@ class snp_array{
 
 	                  return data[index];
 			}
-  };
+};
+
+
+
+
+snp_array generate_allele_spesific_primers(snp_data data, int min_length, int max_length) {
+
+	snp_array result;
+
+
+
+	return result;
+}
+
+std::vector<std::string> introduce_missmatch(std::string str, int pos) {
+
+	std::vector<std::string> primers;
+
+
+	return primers;
+}
+
+snp_array filter_primers(snp_data data, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
+  	snp_array result;
+
+
+
+
+
+
+
+	return result;
+}
+
+snp_array rank_primers(snp_array data){
+	snp_array result;
+
+
+	return result;
+}
+
+snp_array generate_matching_primers(snp_array data, snp_array allele_spesific_primers, int min_distance, int max_distance) {
+
+	snp_array result;
+
+
+
+    return result;
+}
+
+snp_array check_multiplex_compatibility(snp_array data, double heterodimer_max){
+  snp_array result;
+
+
+
+  return result;
+}
+
 
 
 
@@ -74,8 +131,14 @@ std::string reverse_complement(std::string s) {
 
 
 PYBIND11_MODULE(pcr_lib, m) {
-    m.def("reverse_complement", &reverse_complement, "This function takes a string, and returns the reverse complement of the string or sequence");
-    
+    m.def("reverse_complement", &reverse_complement, "This function takes a string, and returns the reverse complement of the string or sequence.");
+    m.def("generate_allele_spesific_primers", &generate_allele_spesific_primers, "This function takes in a an array of primers or snp data and a minimum and maximun length, and returns a generated list of allele spesific primers.");
+    m.def("introduce_missmatch", &introduce_missmatch, "Takes in a sequence as a string, and a position, and returns a *list* of missmatches.");
+    m.def("filter_primers", &filter_primers, "Takes in an array of primers, a tm min & max, a hairpin max, and a homodimer max, and returns the filtered list of primers.");
+    m.def("rank_primers", &rank_primers, "Takes in an array of primers, and returns an ranked array of primers.");
+    m.def("generate_matching_primers", &generate_matching_primers, "Takes in 2 arrays of primers, and a min & max distance, and returns an array of matching primers.");
+    m.def("check_multiplex_compatibility", &check_multiplex_compatibility, "Takes in a list of primers, and a heterodimer maximun, and returns an array of all possible primer combinations? REDO THIS ONE!!!!!!!!!!!!!!!");
+
     py::class_<snp_data>(m, "snp_data")
         .def(py::init<>())
         .def_readwrite("rsid", &snp_data::rsid)
