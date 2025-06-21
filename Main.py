@@ -18,8 +18,6 @@ print(test_var["allele"])
 
 
 
-
-
 def Fetch_SNP_Data(rsids: list[str], flank_length: int = 800): #  -> pd.DataFrame
     """
         Fetch SNP data from dbSNP (mocked for demo).

@@ -7,7 +7,7 @@
 
 namespace py = pybind11;
 
-class snp_data {
+class primer {
     public:
         std::string rsid;
         std::string allele;
@@ -32,11 +32,11 @@ class snp_data {
 		}
 };
 
-class snp_array{
+class primer_group{
 	  public:
-			std::vector<snp_data> data;
+			std::vector<primer> data;
 
-			snp_data get(const int index) const {
+			primer get(const int index) const {
                           if( index < 0){ throw std::out_of_range("the index is out of raeng"); }
 
 	                  return data[index];
@@ -46,9 +46,9 @@ class snp_array{
 
 
 
-snp_array generate_allele_spesific_primers(snp_data data, int min_length, int max_length) {
+primer_group generate_allele_spesific_primers(primer data, int min_length, int max_length) {
 
-	snp_array result;
+	primer_group result;
 
 
 
@@ -63,8 +63,8 @@ std::vector<std::string> introduce_missmatch(std::string str, int pos) {
 	return primers;
 }
 
-snp_array filter_primers(snp_data data, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
-  	snp_array result;
+primer_group filter_primers(primer data, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
+  	primer_group result;
 
 
 
@@ -75,24 +75,24 @@ snp_array filter_primers(snp_data data, int tm_min, int tm_max, double hairpin_m
 	return result;
 }
 
-snp_array rank_primers(snp_array data){
-	snp_array result;
+primer_group rank_primers(primer_group data){
+	primer_group result;
 
 
 	return result;
 }
 
-snp_array generate_matching_primers(snp_array data, snp_array allele_spesific_primers, int min_distance, int max_distance) {
+primer_group generate_matching_primers(primer_group data, primer_group allele_spesific_primers, int min_distance, int max_distance) {
 
-	snp_array result;
+	primer_group result;
 
 
 
     return result;
 }
 
-snp_array check_multiplex_compatibility(snp_array data, double heterodimer_max){
-  snp_array result;
+primer_group check_multiplex_compatibility(primer_group data, double heterodimer_max){
+  primer_group result;
 
 
 
@@ -139,22 +139,22 @@ PYBIND11_MODULE(pcr_lib, m) {
     m.def("generate_matching_primers", &generate_matching_primers, "Takes in 2 arrays of primers, and a min & max distance, and returns an array of matching primers.");
     m.def("check_multiplex_compatibility", &check_multiplex_compatibility, "Takes in a list of primers, and a heterodimer maximun, and returns an array of all possible primer combinations? REDO THIS ONE!!!!!!!!!!!!!!!");
 
-    py::class_<snp_data>(m, "snp_data")
+    py::class_<primer>(m, "primer")
         .def(py::init<>())
-        .def_readwrite("rsid", &snp_data::rsid)
-        .def_readwrite("allele", &snp_data::allele)
-        .def_readwrite("primer_sequence", &snp_data::primer_sequence)
-        .def_readwrite("direction", &snp_data::direction)
-        .def_readwrite("length", &snp_data::length)
-        .def_readwrite("gc_content", &snp_data::gc_content)
-        .def_readwrite("hairpin", &snp_data::hairpin)
-        .def_readwrite("homodimer", &snp_data::homodimer)
-    	.def("__getitem__", &snp_data::get);
+        .def_readwrite("rsid", &primer::rsid)
+        .def_readwrite("allele", &primer::allele)
+        .def_readwrite("primer_sequence", &primer::primer_sequence)
+        .def_readwrite("direction", &primer::direction)
+        .def_readwrite("length", &primer::length)
+        .def_readwrite("gc_content", &primer::gc_content)
+        .def_readwrite("hairpin", &primer::hairpin)
+        .def_readwrite("homodimer", &primer::homodimer)
+    	.def("__getitem__", &primer::get);
 
-    py::class_<snp_array>(m, "snp_array")
+    py::class_<primer_group>(m, "primer_group")
 		.def(py::init<>())
-    	.def_readwrite("data", &snp_array::data)
-    	.def("__getitem__", &snp_array::get);
+    	.def_readwrite("data", &primer_group::data)
+    	.def("__getitem__", &primer_group::get);
 
 
 }
