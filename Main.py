@@ -10,9 +10,11 @@ testvar = "ATGA"
 
 print(pl.reverse_complement(testvar))
 
-
-
-
+test_var = pl.snp_data()
+print(test_var)
+test_var.allele = "awiohduiahwuidhuiawhuid"
+print(test_var.allele)
+print(test_var["allele"])
 
 
 
