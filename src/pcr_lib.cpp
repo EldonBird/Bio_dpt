@@ -15,8 +15,9 @@ class primer {
         std::string direction;
         int length;
 		std::string gc_content;
-		std::string hairpin;
-		std::string homodimer;
+        int tm;
+		int hairpin;
+		int homodimer;
 
 
         std::string get(const std::string& key) const {
@@ -25,8 +26,9 @@ class primer {
     		if (key == "primer_sequence") return primer_sequence;
     		if (key == "direction") return direction;
     		if (key == "gc_content") return gc_content;
-    		if (key == "hairpin") return hairpin;
-    		if (key == "homodimer") return homodimer;
+    		if (key == "tm") return std::to_string(tm);
+    		if (key == "hairpin") return std::to_string(hairpin);
+    		if (key == "homodimer") return std::to_string(homodimer);
     		if (key == "length") return std::to_string(length);
             throw std::invalid_argument("Invalid key name");
 		}
@@ -40,6 +42,9 @@ class primer_group{
                           if( index < 0){ throw std::out_of_range("the index is out of raeng"); }
 
 	                  return data[index];
+			}
+			void add(primer p) {
+				data.push_back(p);
 			}
 };
 
@@ -63,14 +68,31 @@ std::vector<std::string> introduce_missmatch(std::string str, int pos) {
 	return primers;
 }
 
-primer_group filter_primers(primer data, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
+std::unordered_map<std::string, std::string> evaluate_primer(const std::string & string) {
+
+	std::unordered_map<std::string, std::string> result;
+
+
+
+
+	return result;
+}
+
+
+primer_group filter_primers(primer_group evaluated_primers, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
   	primer_group result;
 
+    for (int i = 0; i < evaluated_primers.data.size(); i++) {
+      	primer current_primer = evaluated_primers.get(i);
 
 
+    	if (current_primer.tm < tm_min) continue;
+    	if (current_primer.tm > tm_max) continue;
+    	if (current_primer.hairpin > hairpin_max) continue;
+    	if (current_primer.homodimer > homodimer_max) continue;
 
-
-
+		result.add(current_primer);
+    }
 
 	return result;
 }
@@ -98,6 +120,7 @@ primer_group check_multiplex_compatibility(primer_group data, double heterodimer
 
   return result;
 }
+
 
 
 
