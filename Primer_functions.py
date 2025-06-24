@@ -49,7 +49,48 @@ def Generate_Allele_Spesific_Primers(snp_data: pd.DataFrame, min_len: int = 18, 
         - Use parallel processing (e.g., multiprocessing) for many SNPs.
         - Add validation for sequence length and SNP position.
         """
-    ...
+    # make an empty list of primers
+    #iterate through each function calling the find primers function. 
+    #this function is a paralizing shell that will house the true find primers function.
+
+def Find_Primers(snp_row, min_len, max_len):
+        this_allele_primers = []
+        snp_id = snp_row["snpID"]
+        allele = snp_row["allele"]
+        sequence = snp_row["sequence"]
+        center = snp_row["position"]
+
+        forward = sequence[center - max_len + 1:center + 1]#this gets the largest segment.
+        forward_mismatch = introduce_mismatch(forward, max_len)
+        sequence_length = len(forward_mismatch)
+
+        if sequence_length >= min_len:
+            for length in range(max_len-min_len-1):#possibe bug if the forward missmatch is smaller than the minimum length
+                trimmed = forward_mismatch[length]
+                this_allele_primers.append({
+                    "snpID": snp_id,
+                    "allele": allele,
+                    "primer_sequence": trimmed,
+                    "direction": "forward",
+                    "length": sequence_length-length
+                })
+        else:
+            print("there's a troll in the dungeon!!!")
+
+
+            #do the rest later
+        # Reverse primer: downstream sequence, reverse complemented
+        reverse = reverse_complement(sequence[center:center + length])
+        reverse_mismatches = introduce_mismatch(reverse, length)
+        for rm in reverse_mismatches:
+            primers.append({
+                "snpID": snp_id,
+                "allele": allele,
+                "primer_sequence": rm,
+                "direction": "reverse",
+                "length": length
+            })
+    return pd.DataFrame(primers)
 
 def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
     """
