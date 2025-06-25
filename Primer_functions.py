@@ -1,5 +1,5 @@
 import pandas as pd
-
+import re 
 
 # Sequence -> Sequence
 def Reverse_Compliment(sequence: str): #  -> str
@@ -7,13 +7,43 @@ def Reverse_Compliment(sequence: str): #  -> str
     ...
 
 
-def Introduce_Mismatch(sequence: str, position: int): #  -> List[str]:
+def Introduce_Mismatch(primer_sequence: str) -> str:
     """
-        Introduce a mismatch at the antepenultimate position (3rd from last).
-        TODO: Validate mismatch rule for biological accuracy.
-        - Consider additional mismatch types if needed for specificity.
-        - Add checks for invalid sequences (e.g., non-ACGT bases).
-        """
+    Introduces a base mismatch at the antepenultimate position (3rd from last).
+    """
+    # Ensure valid string input
+    if not primer_sequence or not isinstance(primer_sequence, str):
+        print("Warning: Invalid primer input.")
+        return primer_sequence
+
+    primer_sequence = primer_sequence.upper().strip()
+
+    # Must only contain A, C, G, T
+    if not re.match("^[ACGT]+$", primer_sequence):
+        print(f"Warning: Invalid characters in primer: {primer_sequence}")
+        return primer_sequence
+
+    # Must be long enough to have a 3rd-to-last base
+    if len(primer_sequence) < 3:
+        print(f"Warning: Primer too short for mismatch: {primer_sequence}")
+        return primer_sequence
+
+    # Simple mismatch rules (purine↔purine, pyrimidine↔pyrimidine)
+    mismatch_rules = {
+        "A": "G", "G": "A",
+        "C": "T", "T": "C"
+    }
+
+    pos = len(primer_sequence) - 3  # Antepenultimate index
+    base = primer_sequence[pos]
+    mismatch = mismatch_rules.get(base)
+
+    if mismatch is None:
+        print(f"Warning: No mismatch rule for base '{base}'")
+        return primer_sequence
+
+    # Replace the base with its mismatch
+    return primer_sequence[:pos] + mismatch + primer_sequence[pos + 1:]
 
 
 def Evaluate_Primers(primer_seq: str): # -> Dict:
