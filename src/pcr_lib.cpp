@@ -1,4 +1,5 @@
-﻿#include <pybind11/pybind11.h>
+﻿#include <stdexcept>
+#include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <stdio.h>
 #include <string>
@@ -39,7 +40,7 @@ class primer_group{
 			std::vector<primer> data;
 
 			primer get(const int index) const {
-                          if( index < 0){ throw std::out_of_range("the index is out of raeng"); }
+                          if( index < 0){ throw std::out_of_range("the index is out of range"); }
 
 	                  return data[index];
 			}
@@ -60,12 +61,43 @@ primer_group generate_allele_spesific_primers(primer data, int min_length, int m
 	return result;
 }
 
-std::vector<std::string> introduce_missmatch(std::string str, int pos) {
-
-	std::vector<std::string> primers;
 
 
-	return primers;
+std::string introduce_missmatch(std::string str) {
+
+	std::unordered_map<char, char> complement = {
+      
+		{'A', 'T'}, {'T', 'A'},
+		{'C', 'G'}, {'G', 'C'},
+		{'a', 't'}, {'t', 'a'},
+		{'c', 'g'}, {'g', 'c'}
+    
+	};
+
+	if (str.length() < 3) {
+		throw std::invalid_argument("Invalid Sequence, Not larger than 3.");
+	}
+
+	int position = str.length() - 3;
+	char base = str[position];
+	char missmatch = complement[base];
+
+	if (missmatch == ' ') {
+		throw std::invalid_argument("Warning: No mismatch rule for base" + str);
+	}
+	
+	std::string new_str = "";
+
+	for (int i = 0; i < str.length(); i++) {
+		
+		if (i == position) {
+			new_str += missmatch;
+		}
+		else {
+			str[i];
+		}
+	}
+	return new_str;	
 }
 
 std::unordered_map<std::string, std::string> evaluate_primer(const std::string & string) {

@@ -1,10 +1,9 @@
 file(REMOVE_RECURSE
-  "Bio_dpt.exe"
-  "Bio_dpt.exe.manifest"
+  "CMakeFiles/Bio_dpt.dir/link.d"
+  "Bio_dpt"
   "Bio_dpt.pdb"
-  "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.obj"
-  "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.obj.d"
-  "libBio_dpt.dll.a"
+  "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.o"
+  "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.o.d"
 )
 
 # Per-language clean rules from dependency scanning.
