@@ -39,7 +39,7 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
             # We'll just take the first mapping (usually sufficient for common SNPs)
             mapping = mappings[0]
             chrom = mapping["seq_region_name"]  # e.g., "11"
-            pos = int(mapping["start"]) - 1     # Convert to 0-based index #Isaiah's note: Why convert to 0 base then add 1 back later?
+            pos = int(mapping["start"]) - 1     # Convert to 0-based index
 
             # Extract allele string like "A/G" or "C/T"
             allele_str = mapping.get("allele_string", "")
@@ -51,15 +51,15 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
                 continue
 
             # Step 2: Fetch the flanking DNA sequence around the SNP
-            seq_start = max(1, pos + 1 - flank_length)  # 1-based for Ensemble #Isaiah's note: added 1 back when we took 1 away in line 41
-            seq_end = pos + 1 + flank_length #Isaiah's note: added 1 back when we took 1 away in line 41
+            seq_start = max(1, pos + 1 - flank_length)  # 1-based for Ensemble 
+            seq_end = pos + 1 + flank_length 
             seq_url = f"{ENSEMBL_REST}/sequence/region/human/{chrom}:{seq_start}..{seq_end}:1?"
             seq_resp = requests.get(seq_url, headers={"Content-Type": "text/plain"})
             seq_resp.raise_for_status()
             template_seq = seq_resp.text.strip()
 
             # Position of the SNP relative to the start of the fetched sequence
-            rel_pos = (pos + 1) - seq_start #Isaiah's note: added 1 back when we took 1 away in line 41
+            rel_pos = (pos + 1) - seq_start 
 
             # Step 3: Replace the SNP base with each possible allele to simulate variation
             for allele in alleles:
