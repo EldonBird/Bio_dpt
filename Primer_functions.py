@@ -79,7 +79,59 @@ def Generate_Allele_Spesific_Primers(snp_data: pd.DataFrame, min_len: int = 18, 
         - Use parallel processing (e.g., multiprocessing) for many SNPs.
         - Add validation for sequence length and SNP position.
         """
-    ...
+    all_primers = []
+    #made these two separate functions incase we want to parallelize them
+    for _, row in snp_data.iterrows():#left this as it was. Need to look at how the data will actually come in
+        all_primers.append(Find_Primers(row, min_len, max_len))#call the function again and again. My say is we batch by snpID or something and multiprocess a batch
+        #starting a whole thread just for a couple for loops doesn't quite seem justified.
+
+    # make an empty list of primers
+    #iterate through each function calling the find primers function. 
+    #this function is a paralizing shell that will house the true find primers function.
+
+def Find_Primers(snp_row, min_len, max_len):
+    this_allele_primers = []
+    snp_id = snp_row["snpID"]
+    allele = snp_row["allele"]
+    sequence = snp_row["sequence"]
+    center = snp_row["position"]
+
+    forward = sequence[center - max_len + 1:center + 1]#this gets the largest segment.
+    forward_mismatch = introduce_mismatch(forward, max_len)
+    forward_length = len(forward_mismatch)
+
+    if forward_length >= min_len:
+        for length in range(max_len-min_len-1):#possibe bug if the forward missmatch is smaller than the minimum length
+            trimmed = forward_mismatch[length]
+            this_allele_primers.append({
+                "snpID": snp_id,
+                "allele": allele,
+                "primer_sequence": trimmed,
+                "direction": "forward",
+                "length": forward_length-length
+            })
+    else:
+        print("there's a troll in the dungeon!!!")
+
+
+    # Reverse primer: downstream sequence, reverse complemented
+    reverse = reverse_complement(sequence[center:center + length])
+    reverse_mismatch = introduce_mismatch(reverse, length)
+    reverse_length = len(reverse_mismatch)
+
+    if reverse_length >= min_len:
+        for length in range(max_len-min_len-1):
+            trimmed = forward_mismatch[length]
+            this_allele_primers.append({
+                "snpID": snp_id,
+                "allele": allele,
+                "primer_sequence": trimmed,
+                "direction": "reverse",
+                "length": reverse_length-length
+            })
+    else:
+        print("there's a troll in the dungeon!!!")
+    return pd.DataFrame(this_allele_primers)
 
 def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
     """
