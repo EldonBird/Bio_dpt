@@ -2,7 +2,7 @@ import pandas as pd
 import re 
 
 # Sequence -> Sequence
-def Reverse_Compliment(sequence: str): #  -> str
+def Reverse_Complement(sequence: str): #  -> str
     # return str(Seq.Seq(sequence).reverse_complement())
     ...
 
@@ -97,7 +97,7 @@ def Find_Primers(snp_row, min_len, max_len):
     center = snp_row["position"]
 
     forward = sequence[center - max_len + 1:center + 1]#this gets the largest segment.
-    forward_mismatch = introduce_mismatch(forward, max_len)
+    forward_mismatch = Introduce_Mismatch(forward, max_len)
     forward_length = len(forward_mismatch)
 
     if forward_length >= min_len:
@@ -115,8 +115,8 @@ def Find_Primers(snp_row, min_len, max_len):
 
 
     # Reverse primer: downstream sequence, reverse complemented
-    reverse = reverse_complement(sequence[center:center + length])
-    reverse_mismatch = introduce_mismatch(reverse, length)
+    reverse = Reverse_Complement(sequence[center:center + length])
+    reverse_mismatch = Introduce_Mismatch(reverse, length)
     reverse_length = len(reverse_mismatch)
 
     if reverse_length >= min_len:
