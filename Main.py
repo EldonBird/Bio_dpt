@@ -28,6 +28,7 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
         try:
             # Step 1: Get SNP mapping (chromosome + position info)
             var_resp = requests.get(f"{ENSEMBL_REST}/variation/homo_sapiens/{rsid}?", headers=headers)
+            print("Ooh piece of candy!")
             var_resp.raise_for_status()
             var_data = var_resp.json()
 
@@ -55,6 +56,7 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
             seq_end = pos + 1 + flank_length 
             seq_url = f"{ENSEMBL_REST}/sequence/region/human/{chrom}:{seq_start}..{seq_end}:1?"
             seq_resp = requests.get(seq_url, headers={"Content-Type": "text/plain"})
+            print("Ooh (small) piece of candy!")
             seq_resp.raise_for_status()
             template_seq = seq_resp.text.strip()
 
@@ -105,8 +107,14 @@ def Main():
         - Validate output with biological experts.
         - Benchmark performance for large SNP sets.
         """
-    snp_df = Fetch_SNP_Data(["rs1799971", "rs599839"])# just here for testing.
-    print(snp_df)
+    
+    # snp_test = pd.DataFrame()
+    # snp_df = Fetch_SNP_Data(["rs1799971"], 30)# just here for testing.  , "rs599839"
+    # print(snp_df)
+
+    # primers = Generate_Allele_Spesific_Primers(snp_df)
+    # print(primers)
+
 
 
 

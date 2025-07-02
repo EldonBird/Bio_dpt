@@ -1,10 +1,12 @@
 import pandas as pd
 import re 
+from Bio.Seq import Seq
 
-# Sequence -> Sequence
-def Reverse_Complement(sequence: str): #  -> str
-    # return str(Seq.Seq(sequence).reverse_complement())
-    ...
+# # Sequence -> Sequence
+# def Reverse_Complement(sequence: str): #  -> str
+    
+#     return str(Seq(sequence).reverse_complement())
+# This function was unnecessary
 
 
 def Introduce_Mismatch(primer_sequence: str) -> str:
@@ -96,13 +98,15 @@ def Find_Primers(snp_row, min_len, max_len):
     sequence = snp_row["sequence"]
     center = snp_row["position"]
 
-    forward = sequence[center - max_len + 1:center + 1]#this gets the largest segment.
-    forward_mismatch = Introduce_Mismatch(forward, max_len)
+
+    forward = sequence[center - max_len + 1 :center + 1]#this gets the largest segment.   
+    forward_mismatch = Introduce_Mismatch(forward)
     forward_length = len(forward_mismatch)
+   
 
     if forward_length >= min_len:
-        for length in range(max_len-min_len-1):#possibe bug if the forward missmatch is smaller than the minimum length
-            trimmed = forward_mismatch[length]
+        for length in range(max_len-(min_len-1)):#possible bug if the forward missmatch is smaller than the minimum length
+            trimmed = forward_mismatch[length:]
             this_allele_primers.append({
                 "snpID": snp_id,
                 "allele": allele,
@@ -110,18 +114,21 @@ def Find_Primers(snp_row, min_len, max_len):
                 "direction": "forward",
                 "length": forward_length-length
             })
+            
     else:
-        print("there's a troll in the dungeon!!!")
+        print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {forward_length}")
 
 
     # Reverse primer: downstream sequence, reverse complemented
-    reverse = Reverse_Complement(sequence[center:center + length])
-    reverse_mismatch = Introduce_Mismatch(reverse, length)
+    # print(f"here's the sequence again: {sequence}")
+    reverse = str(Seq(sequence[center + 1:center+max_len-1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
+    reverse_mismatch = Introduce_Mismatch(reverse)
     reverse_length = len(reverse_mismatch)
+    
 
     if reverse_length >= min_len:
-        for length in range(max_len-min_len-1):
-            trimmed = forward_mismatch[length]
+        for length in range(max_len-(min_len-1)):
+            trimmed = forward_mismatch[length:]
             this_allele_primers.append({
                 "snpID": snp_id,
                 "allele": allele,
@@ -129,8 +136,9 @@ def Find_Primers(snp_row, min_len, max_len):
                 "direction": "reverse",
                 "length": reverse_length-length
             })
+            
     else:
-        print("there's a troll in the dungeon!!!")
+        print(f"The length of your reverse primer wasn't long enough. \n You needed one at least {min_len} long and it ended up only being {reverse_length}")
     return pd.DataFrame(this_allele_primers)
 
 def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::

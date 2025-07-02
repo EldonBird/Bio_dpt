@@ -1,10 +1,12 @@
-snp = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ2A2B2C2D2E2F2G2H2I2J2K2L2M2N2O2P2Q2R2S2T2U2V2W2X2Y2Z3A3B3C3D3E3F3G3H3I3J3K3L3M3N3O3P3Q3R3S3T3U3V3W3X3Y3Z'
-max_len = 30
-min_len = 18
-for length in range(max_len-min_len-1):
-    trimmed = snp[length]
-    print(trimmed)
-    print(length)
+from Bio import Seq
+
+snp = 'ATGCAATTGGCCAAATTTGGGCCCAAAATTTTGGGGCCCCAAAAATTTTTGGGGGCCCCCAAAAAATTTTTTGGGGGGCCCCCC'
+# max_len = 30
+# min_len = 18
+# for length in range(max_len-min_len-1):
+#     trimmed = snp[length]
+#     print(trimmed)
+#     print(length)
 
 
 # ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H2I2J2K
@@ -20,3 +22,13 @@ for length in range(max_len-min_len-1):
 # ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F
 # ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2
 # ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E
+
+snp_short = snp[0:10]
+print(f"Normal string: {snp_short}")
+seq = Seq.Seq(snp_short)
+print(f"Now a sequence in BIO Python: {seq}")
+reverse = seq.reverse_complement()
+print(f"Now a reverse sequence in Bio Python: {reverse}")
+rev_string = str(reverse)
+print(f"Now a string again: {rev_string}")
+reverse
