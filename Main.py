@@ -108,12 +108,12 @@ def Main():
         - Benchmark performance for large SNP sets.
         """
     
-    snp_test = pd.DataFrame()
-    snp_df = Fetch_SNP_Data(["rs1799971"], 30)# just here for testing.  , "rs599839"
-    print(snp_df)
+    # snp_test = pd.DataFrame()
+    # snp_df = Fetch_SNP_Data(["rs1799971"], 30)# just here for testing.  , "rs599839"
+    # print(snp_df)
 
-    primers = Generate_Allele_Spesific_Primers(snp_df)
-    print(primers)
+    # primers = Generate_Allele_Spesific_Primers(snp_df)
+    # print(primers)
 
 
 
