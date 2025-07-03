@@ -2,6 +2,10 @@ import pandas as pd
 import primer3
 import random
 
+
+def add(A, B):
+    return A + B
+
 def Check_Multiplex_Compatibility(primer_pairs: pd.DataFrame, heterodimer_max: float = 50.0): # -> [{score: 32.2, combination: (P1, P2, P3, P4)}, {...}]:
     """
     Check primer sets for multiplex compatibility.
