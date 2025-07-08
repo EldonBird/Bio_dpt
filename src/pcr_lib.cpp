@@ -61,8 +61,6 @@ primer_group generate_allele_spesific_primers(primer data, int min_length, int m
 	return result;
 }
 
-
-
 std::string introduce_missmatch(std::string str) {
 
 	std::unordered_map<char, char> complement = {
@@ -110,7 +108,6 @@ std::unordered_map<std::string, std::string> evaluate_primer(const std::string &
 	return result;
 }
 
-
 primer_group filter_primers(primer_group evaluated_primers, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
   	primer_group result;
 
@@ -152,10 +149,6 @@ primer_group check_multiplex_compatibility(primer_group data, double heterodimer
 
   return result;
 }
-
-
-
-
 
 std::string reverse_complement(std::string s) {
   

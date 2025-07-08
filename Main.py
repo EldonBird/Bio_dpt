@@ -6,16 +6,15 @@ import pcr_lib as pl
 
 
 
+
 testvar = "ATGA"
 
 print(pl.reverse_complement(testvar))
-
 test_var = pl.snp_data()
 print(test_var)
 test_var.allele = "awiohduiahwuidhuiawhuid"
 print(test_var.allele)
 print(test_var["allele"])
-
 
 
 def Fetch_SNP_Data(rsids: list[str], flank_length: int = 800): #  -> pd.DataFrame
