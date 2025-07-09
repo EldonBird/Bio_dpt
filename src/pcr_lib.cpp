@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <pstl/execution_defs.h>
 
 namespace py = pybind11;
 
@@ -48,9 +49,6 @@ class primer_group{
 				data.push_back(p);
 			}
 };
-
-
-
 
 primer_group generate_allele_spesific_primers(primer data, int min_length, int max_length) {
 
@@ -98,7 +96,7 @@ std::string introduce_missmatch(std::string str) {
 	return new_str;	
 }
 
-std::unordered_map<std::string, std::string> evaluate_primer(const std::string & string) {
+std::unordered_map<std::string, std::string> evaluate_primer(const std::string seq) {
 
 	std::unordered_map<std::string, std::string> result;
 
@@ -136,6 +134,49 @@ primer_group rank_primers(primer_group data){
 primer_group generate_matching_primers(primer_group data, primer_group allele_spesific_primers, int min_distance, int max_distance) {
 
 	primer_group result;
+
+	for (int i = 0; i < allele_spesific_primers.data.size(); i++) {
+		
+		int snp_id = allele_spesific_primers.get(i).snp_id;
+		std::string allele = allele_spesific_primers.get(i).allele;
+		std::string direction = allele_spesific_primers.get(i).direction;
+		std::string sequence = allele_spesific_primers.get(i).primer_sequence;
+		int center = allele_spesific_primers.get(i).center;
+
+
+
+		for (int dist = min_distance; dist <= max_distance + 1; dist += 10) {
+
+			for (int length = 18; length < 29; length++) {
+
+				if (direction == "forward") {
+					int start = center + dist;
+					std::string intermediate = sequence.substr(start, start + length);
+					std::string primer_seq = reverse_compliment(intermediate);
+				}
+				else {
+					int start = center - dist - length;
+					std::string primer_Sec = sequence.substr(start, start+length);
+				}
+				std::unordered_map<std::string, std::string> metrics = evaluate_primer(sequence);
+
+				if (metric.tm >= 60.0 && metric.tm < 65.0 &&
+					metrics.gc >= 40.0 && metrics.gc <= 60.0 &&
+					metrics.hairpin < 45.0 &&
+					metrics.homodimer < 45.0) {
+
+					result.data.push_back(allele_spesific_primers.get(i));
+
+					
+				}
+
+				
+			}
+			
+		}
+
+		
+	}
 
 
 
