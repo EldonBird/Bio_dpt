@@ -12,6 +12,7 @@ namespace py = pybind11;
 class primer {
     public:
         std::string rsid;
+		int position;
         std::string allele;
         std::string primer_sequence;
         std::string direction;
@@ -25,6 +26,7 @@ class primer {
         std::string get(const std::string& key) const {
    			if (key == "rsid") return rsid;
     		if (key == "allele") return allele;
+        	if (key == "position") return std::to_string(position);
     		if (key == "primer_sequence") return primer_sequence;
     		if (key == "direction") return direction;
     		if (key == "gc_content") return gc_content;
@@ -50,16 +52,42 @@ class primer_group{
 			}
 };
 
-primer_group generate_allele_spesific_primers(primer data, int min_length, int max_length) {
-
+primer_group generate_allele_spesific_primers(primer_group Snp_data, int min_length, int max_length) {
 	primer_group result;
 
+	for (int i = 0; i < Snp_data.data.size(); i++) {
+
+		int snp_id = Snp_data.get(i).snp_id;
+		std::string allele = Snp_data.get(i).allele;
+		std::string sequence = Snp_data.get(i).primer_sequence;
+		int center = Snp_data.get(i).position;
+
+		for (int i = min_length; i < max_length + 1; i++) {
+	
+			std::string foward = sequence.substr(center, sequence.length());
+			std::string foward_missmatches = introduce_mismatch(foward, i);
+
+			
+			for
 
 
+			
+		}for length in range(min_len, max_len + 1):
+            # Forward prime
+		
+
+
+
+		
+	}
+
+	
 	return result;
 }
 
 std::string introduce_missmatch(std::string str) {
+
+	std::vector<std::string> result;
 
 	std::unordered_map<char, char> complement = {
       
