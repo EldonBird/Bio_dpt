@@ -48,14 +48,42 @@ def Introduce_Mismatch(primer_sequence: str) -> str:
     return primer_sequence[:pos] + mismatch + primer_sequence[pos + 1:]
 
 
-def Evaluate_Primers(primer_seq: str): # -> Dict:
+def Evaluate_Primers(primer_seq: str) -> Dict:
     """
-        Evaluate primer quality using primer3-py.
-        TODO: Enhance error handling.
-        - Handle primer3-py failures gracefully.
-        - Add logging for failed evaluations.
-        """
-    ...
+    Evaluates a single primer using the modern `primer3.design_primers` method
+    with thermodynamic parameter path for accurate ΔG calculation.
+    """
+    # Standardize sequence to uppercase for consistency.
+    seq = primer_seq.upper()
+    # Validate input: return default values for empty or non-DNA sequences.
+    if not seq or not set(seq) <= {'A', 'T', 'G', 'C'}:
+        return {"tm": 0, "gc_content": 0, "hairpin_dg": 0, "homodimer_dg": 0}
+
+    # Use the robust, all-in-one 'design_primers' engine for evaluation.
+    result = primer3.design_primers(
+        # Define the sequence to be evaluated.
+        seq_args={
+            'SEQUENCE_TEMPLATE': seq,
+        },
+        # Specify global parameters for the evaluation task.
+        global_args={
+            'PRIMER_TASK': 'check_primers', # Instructs primer3 to check a provided primer.
+            'PRIMER_EXPLAIN_FLAG': 1, # Provides detailed output.
+            # CRITICAL: Provide the path to thermodynamic parameters for accurate ΔG calculation.
+            'PRIMER_THERMODYNAMIC_PARAMETERS_PATH': primer3.THERMODYNAMIC_PARAMETERS_PATH,
+        },
+        # Provide the primer sequence to be checked.
+        primer_args={'PRIMER_SEQUENCE': seq}
+    )
+    
+    # Extract results from the output dictionary.
+    # The 'bindings' return ΔG in cal/mol, so we convert it to kcal/mol by dividing by 1000.
+    return {
+        'tm': result.get('PRIMER_LEFT_0_TM', 0.0),
+        'gc_content': result.get('PRIMER_LEFT_0_GC_PERCENT', 0.0),
+        'hairpin_dg': result.get('PRIMER_LEFT_0_HAIRPIN_DG', 0.0) / 1000.0,
+        'homodimer_dg': result.get('PRIMER_LEFT_0_SELF_ANY_DG', 0.0) / 1000.0
+    }
 
 def Rank_Primers(primers: pd.DataFrame): # -> pd.DataFrame:
     """
@@ -66,12 +94,73 @@ def Rank_Primers(primers: pd.DataFrame): # -> pd.DataFrame:
         """
     ...
 
-def Filter_Primers(primers: pd.DataFrame, tm_min: float = 60.0, tm_max: float = 65.0, hairpin_max: float = 45.0, homodimer_max: float = 45.0): # -> pd.DataFrame:
+def Filter_Primers(
+    primers: pd.DataFrame,
+    tm_range: Tuple[float, float] = (60.0, 65.0),
+    gc_range: Tuple[float, float] = (40.0, 60.0),
+    hairpin_dg_min: float = -9.0, # ΔG threshold for hairpins (less negative is better).
+    homodimer_dg_min: float = -9.0, # ΔG threshold for homodimers.
+    use_fallback: bool = True
+) -> pd.DataFrame:
     """
-        Filter primers based on quality metrics.
-        TODO: Add fallback for strict filtering.
-        - If no primers pass, consider relaxing criteria or selecting best available.
-        """
+    Evaluates (if necessary) and filters primers based on quality metrics.
+    - Tm must be within tm_range.
+    - GC% must be within gc_range.
+    - Hairpin and homodimer ΔG must be weaker than the threshold (less negative, i.e., > min).
+    """
+    # Immediately return if the input DataFrame is empty.
+    if primers.empty:
+        return pd.DataFrame()
+
+    # --- Evaluation Step ---
+    # Define the set of required metric columns.
+    required_cols = {'tm', 'gc_content', 'hairpin_dg', 'homodimer_dg'}
+    if not required_cols.issubset(primers.columns):
+        print("Metrics not found, running evaluation...")
+        # Calculate metrics for each primer sequence.
+        metrics_df = primers['primer_sequence'].apply(evaluate_primer).apply(pd.Series)
+        # Join the new metrics back to the original primer data.
+        primers_with_metrics = primers.join(metrics_df)
+    else:
+        # If metrics are already present, just use the input DataFrame.
+        primers_with_metrics = primers
+
+    # --- Strict Filtering Logic ---
+    # Create a boolean mask where each condition must be True for a primer to pass.
+    strict_filter = (
+        primers_with_metrics['tm'].between(*tm_range) &
+        primers_with_metrics['gc_content'].between(*gc_range) &
+        (primers_with_metrics['hairpin_dg'] > hairpin_dg_min) &
+        (primers_with_metrics['homodimer_dg'] > homodimer_dg_min)
+    )
+    # Apply the mask to get the subset of primers that passed.
+    strict_results = primers_with_metrics[strict_filter]
+
+    # If any primers passed the strict filter, add a 'filter_level' column and return them.
+    if not strict_results.empty:
+        return strict_results.assign(filter_level='strict')
+
+    # --- Fallback Logic ---
+    # If no primers passed strict and fallback is enabled, try again with relaxed criteria.
+    if use_fallback:
+        print("WARNING: No primers passed strict filtering. Applying relaxed criteria.")
+        # Create a new boolean mask with wider, more tolerant thresholds.
+        relaxed_filter = (
+            primers_with_metrics['tm'].between(tm_range[0] - 2.0, tm_range[1] + 2.0) &
+            primers_with_metrics['gc_content'].between(gc_range[0] - 5.0, gc_range[1] + 5.0) &
+            (primers_with_metrics['hairpin_dg'] > hairpin_dg_min - 2.0) &
+            (primers_with_metrics['homodimer_dg'] > homodimer_dg_min - 2.0)
+        )
+        # Apply the relaxed filter.
+        relaxed_results = primers_with_metrics[relaxed_filter]
+
+        # If any primers passed the relaxed filter, return them.
+        if not relaxed_results.empty:
+            return relaxed_results.assign(filter_level='relaxed')
+
+    # If no primers pass even the relaxed criteria, print a warning and return an empty DataFrame.
+    print("WARNING: No primers passed filtering, even with relaxed criteria.")
+    return pd.DataFrame()
 
 
 def Generate_Allele_Spesific_Primers(snp_data: pd.DataFrame, min_len: int = 18, max_len: int = 28): # -> pd.DataFrame:
