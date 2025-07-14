@@ -57,7 +57,52 @@ def Evaluate_Primers(primer_seq: str): # -> Dict:
         - Handle primer3-py failures gracefully.
         - Add logging for failed evaluations.
         """
-    print(f'this is the primer given {primer_seq}')
+    # print(f'this is the primer given {primer_seq}')
+    # # Setup logging
+    # logging.basicConfig(
+    #     # print('in set up logic')
+    #     filename="primer_evaluation.log",
+    #     level=logging.INFO,
+    #     # print('logging info')
+    #     format="%(asctime)s - %(levelname)s - %(message)s"
+    # )
+
+    # try:
+    #     result = primer3.bindings.design_primers(
+    #         {
+    #             "SEQUENCE_TEMPLATE": primer_seq,
+    #             "SEQUENCE_PRIMER": primer_seq
+    #         },
+    #         {
+    #             "PRIMER_OPT_SIZE": 20,
+    #             "PRIMER_MIN_SIZE": 18,
+    #             "PRIMER_MAX_SIZE": 28,
+    #             "PRIMER_OPT_TM": 62.5,
+    #             "PRIMER_MIN_TM": 60.0,
+    #             "PRIMER_MAX_TM": 65.0,
+    #             "PRIMER_MIN_GC": 40.0,
+    #             "PRIMER_MAX_GC": 60.0,
+    #             "PRIMER_MAX_HAIRPIN_TH": 45.0,
+    #             "PRIMER_MAX_SELF_ANY_TH": 45.0
+    #         }
+    #     )
+    #     return {
+    #         "tm": result.get("PRIMER_LEFT_0_TM", 0),
+    #         "gc_content": result.get("PRIMER_LEFT_0_GC_PERCENT", 0),
+    #         "hairpin": result.get("PRIMER_LEFT_0_HAIRPIN_TH", 999),
+    #         "homodimer": result.get("PRIMER_LEFT_0_SELF_ANY_TH", 999),
+    #         "success": True
+    #     }
+    # except Exception as e:
+    #     logging.error(f"Primer evaluation failed for sequence: {primer_seq}\nError: {str(e)}")
+    #     return {
+    #         "tm": 0,
+    #         "gc_content": 0,
+    #         "hairpin": 999,
+    #         "homodimer": 999,
+    #         "success": False
+    #     }
+        # print(f'this is the primer given {primer_seq}')
     # Setup logging
     logging.basicConfig(
         # print('in set up logic')
@@ -68,33 +113,22 @@ def Evaluate_Primers(primer_seq: str): # -> Dict:
     )
 
     try:
-        result = primer3.bindings.design_primers(
-            {
-                "SEQUENCE_TEMPLATE": primer_seq,
-                "SEQUENCE_PRIMER": primer_seq
-            },
-            {
-                "PRIMER_OPT_SIZE": 20,
-                "PRIMER_MIN_SIZE": 18,
-                "PRIMER_MAX_SIZE": 28,
-                "PRIMER_OPT_TM": 62.5,
-                "PRIMER_MIN_TM": 60.0,
-                "PRIMER_MAX_TM": 65.0,
-                "PRIMER_MIN_GC": 40.0,
-                "PRIMER_MAX_GC": 60.0,
-                "PRIMER_MAX_HAIRPIN_TH": 45.0,
-                "PRIMER_MAX_SELF_ANY_TH": 45.0
-            }
-        )
+        # Use primer3's analysis functions instead of design_primers
+        result = primer3.bindings.calc_tm(primer_seq)
+        # gc_content = primer3.bindings.calc_gc(primer_seq)
+        hairpin = primer3.bindings.calc_hairpin(primer_seq)
+        homodimer = primer3.bindings.calc_homodimer(primer_seq)
+        
         return {
-            "tm": result.get("PRIMER_LEFT_0_TM", 0),
-            "gc_content": result.get("PRIMER_LEFT_0_GC_PERCENT", 0),
-            "hairpin": result.get("PRIMER_LEFT_0_HAIRPIN_TH", 999),
-            "homodimer": result.get("PRIMER_LEFT_0_SELF_ANY_TH", 999),
+            "tm": result,
+            # "gc_content": gc_content,
+            "hairpin": hairpin.tm if hasattr(hairpin, 'tm') else 0,
+            "homodimer": homodimer.tm if hasattr(homodimer, 'tm') else 0,
             "success": True
         }
     except Exception as e:
         logging.error(f"Primer evaluation failed for sequence: {primer_seq}\nError: {str(e)}")
+        print(primer_seq)
         return {
             "tm": 0,
             "gc_content": 0,
