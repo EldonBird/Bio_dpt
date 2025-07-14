@@ -1,5 +1,5 @@
 from Bio import Seq
-
+import numpy as np
 snp = 'ATGCAATTGGCCAAATTTGGGCCCAAAATTTTGGGGCCCCAAAAATTTTTGGGGGCCCCCAAAAAATTTTTTGGGGGGCCCCCC'
 # max_len = 30
 # min_len = 18
@@ -9,26 +9,20 @@ snp = 'ATGCAATTGGCCAAATTTGGGCCCAAAATTTTGGGGCCCCAAAAATTTTTGGGGGCCCCCAAAAAATTTTTTG
 #     print(length)
 
 
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H2I2J2K
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H2I2J2
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H2I2J
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H2I2
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H2I
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H2
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2H
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G2
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2G
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F2
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2F
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E2
-# ABCDEFGHIJKLMNOPQRSTUVWXYZ 2A2B2C2D2E
+snp_data = [{'snpID': 'rs1799971', 'allele': 'A', 'sequence': 'TCCTGGGTCAACTTGTCCCACTTAGATGGCAACCTGTCCGACCCATGCGGTCCGAACCGCA', 'position': 30}, {'snpID': 'rs1799971', 'allele': 'G', 'sequence': 'TCCTGGGTCAACTTGTCCCACTTAGATGGCGACCTGTCCGACCCATGCGGTCCGAACCGCA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'G', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCGACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'A', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCAACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'C', 'sequence': 
+'AAAAAAAGAGAAAGAAATAGGAGCAGGATCCACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'T', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCTACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}]
 
-snp_short = snp[0:10]
-print(f"Normal string: {snp_short}")
-seq = Seq.Seq(snp_short)
-print(f"Now a sequence in BIO Python: {seq}")
-reverse = seq.reverse_complement()
-print(f"Now a reverse sequence in Bio Python: {reverse}")
-rev_string = str(reverse)
-print(f"Now a string again: {rev_string}")
-reverse
+# snp_short = snp[0:10]
+# print(f"Normal string: {snp_short}")
+# seq = Seq.Seq(snp_short)
+# print(f"Now a sequence in BIO Python: {seq}")
+# reverse = seq.reverse_complement()
+# print(f"Now a reverse sequence in Bio Python: {reverse}")
+# rev_string = str(reverse)
+# print(f"Now a string again: {rev_string}")
+# reverse
+
+np_frame = np.array(snp_data)
+
+for i in np_frame:
+    print(i['sequence'])
