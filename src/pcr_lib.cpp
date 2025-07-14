@@ -1,5 +1,6 @@
 ﻿#include <algorithm>
 #include <ranges>
+#include <filesystem>
 #include <stdexcept>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
@@ -10,7 +11,9 @@
 #include <bits/fs_ops.h>
 #include <pstl/execution_defs.h>
 
+namespace fs = std::filesystem;
 namespace py = pybind11;
+
 
 class primer {
     public:
@@ -44,7 +47,7 @@ std::string reverse_complement(std::string s) {
   
 	std::string result;
     
-	for(int i = 0; i < s.length(); i++) {
+	for(std::size_t i = 0; i < s.length(); i++) {
       
 		char cur_complement = complement[s[i]];
 		result += cur_complement;
@@ -83,10 +86,10 @@ std::string introduce_mismatch(std::string primer_sequence) {
 	
 }
 
-std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, int min_length, int max_length) {
+std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, std::size_t min_length, int max_length) {
 	std::vector<primer> result;
 
-	for (int i = 0; i < data.data.size(); i++) {
+	for (std::size_t i = 0; i < data.size(); i++) {
 
 		std::string snp_id = data[i].snp_id;
 		std::string allele = data[i].allele;
@@ -98,7 +101,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 
 		if (forward.length() >= min_length) {
 
-			for (int length = 0; length < max_length - min_length - 1; length++) {
+			for (std::size_t length = 0; length < max_length - min_length - 1; length++) {
 
 				std::string trimmed = forward_mismatch.substr(length);
 				primer p;
@@ -126,7 +129,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 
 		if (reverse.length() >= min_length) {
 
-			for (int length = 0; length < max_length - min_length - 1; length++) {
+			for (std::size_t length = 0; length < max_length - min_length - 1; length++) {
 
 				// double check that this is doing what I think that it is doing
 				std::string trimmed = reverse_mismatch.substr(length);
@@ -154,7 +157,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 std::vector<primer> filter_primers(std::vector<primer> evaluated_primers, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
 	std::vector<primer> result;
 
-	for (int i = 0; i < evaluated_primers.data.size(); i++) {
+	for (std::size_t i = 0; i < evaluated_primers.size(); i++) {
 		primer current_primer = evaluated_primers[i];
 
 
@@ -171,7 +174,7 @@ std::vector<primer> filter_primers(std::vector<primer> evaluated_primers, int tm
 
 std::vector<primer> rank_primers(std::vector<primer> data, float target_tm, float target_gc){
 
-	for (int i = 0; i < data.size(); i++) {
+	for (std::size_t i = 0; i < data.size(); i++) {
 
 		float tm_score = abs(data[i].tm - target_tm);
 		float gc_Score = abs(data[i].gc - target_gc);
@@ -192,6 +195,7 @@ std::unordered_map<std::string, float> evaluate_primer(const std::string seq) {
 	std::unordered_map<std::string, float> result;
 
 	
+	
 
 
 	return result;
@@ -199,11 +203,11 @@ std::unordered_map<std::string, float> evaluate_primer(const std::string seq) {
 
 
 
-std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std::vector<primer> allele_specific_primers, int min_distance, int max_distance) {
+std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std::vector<primer> allele_specific_primers, std::size_t min_distance, std::size_t max_distance) {
 
 	std::vector<primer> matching_primers;
 
-	for (int i = 0; i < allele_specific_primers.size(); i++) {
+	for (std::size_t i = 0; i < allele_specific_primers.size(); i++) {
 
 		std::string snp_id = allele_specific_primers[i].snp_id;
 		std::string allele = allele_specific_primers[i].allele;
@@ -212,9 +216,9 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 		std::string sequence = snp_data[i].sequence;
 		int center = snp_data[i].position;
 
-		for (int dist = min_distance; dist <= max_distance + 1; dist += 10) {
+		for (std::size_t dist = min_distance; dist <= max_distance + 1; dist += 10) {
 
-			for (int len = 18; len < 29; len++) {
+			for (std::size_t len = 18; len < 29; len++) {
 
 				int start;
 				std::string primer_seq;
@@ -231,7 +235,7 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 				// this doesn't currently actually do anything, I am not quite sure if I should work on this further I have to find out what the,
 				// primer 3 call is doing, this might take too long, or in fact, be impossible.
 				
-				std::unordered_map<std::string, std::string> metrics = evaluate_primer(primer_seq);
+				std::unordered_map<std::string, float> metrics = evaluate_primer(primer_seq);
 
 
 				if (metrics["tm"] >= 60.0 and metrics["tm"] <= 65.0 and
@@ -257,7 +261,8 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, double heterodimer_max){
   std::vector<primer> result;
 
-
+	
+	
 
   return result;
 }
