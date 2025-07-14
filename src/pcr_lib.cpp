@@ -96,12 +96,13 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, s
 		std::string sequence = data[i].sequence;
 		int center = data[i].position;
 
-		std::string forward = sequence.substr(center - max_length + 1, center + 1);
+		// took out the + 1 from center - max_length + 1 double check this
+		std::string forward = sequence.substr(center - max_length, center + 1);
 		std::string forward_mismatch = introduce_mismatch(forward);
 
 		if (forward.length() >= min_length) {
 
-			for (std::size_t length = 0; length < max_length - min_length - 1; length++) {
+			for (std::size_t length = 0; length < max_length - min_length + 1; length++) {
 
 				std::string trimmed = forward_mismatch.substr(length);
 				primer p;
@@ -124,12 +125,12 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, s
 
 
 		// I have no idea if this is what was intended, please have someone double check this ;)
-		std::string reverse = reverse_complement(sequence.substr(center + 1, center + max_length - 1));
+		std::string reverse = reverse_complement(sequence.substr(center, center + max_length + 1));
 		std::string reverse_mismatch = introduce_mismatch(reverse);
 
 		if (reverse.length() >= min_length) {
 
-			for (std::size_t length = 0; length < max_length - min_length - 1; length++) {
+			for (std::size_t length = 0; length < max_length - min_length + 1; length++) {
 
 				// double check that this is doing what I think that it is doing
 				std::string trimmed = reverse_mismatch.substr(length);
