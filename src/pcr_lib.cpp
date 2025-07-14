@@ -19,7 +19,7 @@ class primer {
 		std::string snp_id;
 
 		std::string allele;
-		std::string primer_sequence;
+		std::string sequence;
 		std::string direction;
 
 		float score;
@@ -55,9 +55,7 @@ std::string reverse_complement(std::string s) {
 	return result;
 }
 
-std::string introduce_mismatch(std::string str) {
-
-	std::vector<std::string> result;
+std::string introduce_mismatch(std::string primer_sequence) {
 
 	std::unordered_map<char, char> complement = {
       
@@ -68,30 +66,21 @@ std::string introduce_mismatch(std::string str) {
     
 	};
 
-	if (str.length() < 3) {
-		throw std::invalid_argument("Invalid Sequence, Not larger than 3.");
+	if (primer_sequence.length() < 3) {
+		throw std::invalid_argument("Invalid Sequence, Not larger than 3 : " + primer_sequence);
 	}
 
-	int position = str.length() - 3;
-	char base = str[position];
-	char missmatch = complement[base];
+	int position = primer_sequence.length() - 3;
+	char base = primer_sequence[position];
+	char mismatch = complement[base];
 
-	if (missmatch == ' ') {
-		throw std::invalid_argument("Warning: No mismatch rule for base" + str);
+	if (mismatch == ' ') {
+		throw std::invalid_argument("Warning: No mismatch rule for base" + primer_sequence + " : " + mismatch);
 	}
+
+	// this might need an improvement, I don't know if the substring is inclusive or if the position replacement is correct
+	return primer_sequence.substr(0, position) + mismatch + primer_sequence.substr(position + 1, primer_sequence.length());
 	
-	std::string new_str = "";
-
-	for (int i = 0; i < str.length(); i++) {
-		
-		if (i == position) {
-			new_str += missmatch;
-		}
-		else {
-			str[i];
-		}
-	}
-	return new_str;	
 }
 
 std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, int min_length, int max_length) {
@@ -101,7 +90,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 
 		std::string snp_id = data[i].snp_id;
 		std::string allele = data[i].allele;
-		std::string sequence = data[i].primer_sequence;
+		std::string sequence = data[i].sequence;
 		int center = data[i].position;
 
 		std::string forward = sequence.substr(center - max_length + 1, center + 1);
@@ -118,7 +107,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 
 				p.snp_id = snp_id;
 				p.allele = allele;
-				p.primer_sequence = trimmed;
+				p.sequence = trimmed;
 				p.direction = "forward";
 				p.length = forward.length() - length;
 
@@ -126,7 +115,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 			}
 		}
 		else {
-			throw std::invalid_argument("Error: thte forward length was not greater than or equal to the min length for item, " +
+			throw std::invalid_argument("Error: the forward length was not greater than or equal to the min length for item, " +
 				std::to_string(i) + " : " + snp_id + " . This error happened in the generate_allele_specific_primers");
 		}
 
@@ -145,7 +134,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 
 				p.snp_id = snp_id;
 				p.allele = allele;
-				p.primer_sequence = trimmed;
+				p.sequence = trimmed;
 				p.direction = "reverse";
 				p.length = reverse.length() - length;
 
@@ -162,32 +151,20 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, i
 	return result;
 }
 
-
-
-std::unordered_map<std::string, std::string> evaluate_primer(const std::string seq) {
-
-	std::unordered_map<std::string, std::string> result;
-
-
-
-
-	return result;
-}
-
 std::vector<primer> filter_primers(std::vector<primer> evaluated_primers, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
-  	std::vector<primer> result;
+	std::vector<primer> result;
 
-    for (int i = 0; i < evaluated_primers.data.size(); i++) {
-      	primer current_primer = evaluated_primers[i];
+	for (int i = 0; i < evaluated_primers.data.size(); i++) {
+		primer current_primer = evaluated_primers[i];
 
 
-    	if (current_primer.tm < tm_min) continue;
-    	if (current_primer.tm > tm_max) continue;
-    	if (current_primer.hairpin > hairpin_max) continue;
-    	if (current_primer.homodimer > homodimer_max) continue;
+		if (current_primer.tm < tm_min) continue;
+		if (current_primer.tm > tm_max) continue;
+		if (current_primer.hairpin > hairpin_max) continue;
+		if (current_primer.homodimer > homodimer_max) continue;
 
 		result.push_back(current_primer);
-    }
+	}
 
 	return result;
 }
@@ -210,56 +187,71 @@ std::vector<primer> rank_primers(std::vector<primer> data, float target_tm, floa
 	return data;
 }
 
-std::vector<primer> generate_matching_primers(std::vector<primer> data, std::vector<primer> allele_spesific_primers, int min_distance, int max_distance) {
+std::unordered_map<std::string, float> evaluate_primer(const std::string seq) {
 
-	std::vector<primer> result;
+	std::unordered_map<std::string, float> result;
 
-	for (int i = 0; i < allele_spesific_primers.size(); i++) {
-		
-		int snp_id = allele_spesific_primers[i].snp_id;
-		std::string allele = allele_spesific_primers[i].allele;
-		std::string direction = allele_spesific_primers[i].direction;
-		std::string sequence = allele_spesific_primers[i].primer_sequence;
-		int center = allele_spesific_primers[i].center;
+	
 
 
+	return result;
+}
+
+
+
+std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std::vector<primer> allele_specific_primers, int min_distance, int max_distance) {
+
+	std::vector<primer> matching_primers;
+
+	for (int i = 0; i < allele_specific_primers.size(); i++) {
+
+		std::string snp_id = allele_specific_primers[i].snp_id;
+		std::string allele = allele_specific_primers[i].allele;
+		std::string direction = allele_specific_primers[i].direction;
+
+		std::string sequence = snp_data[i].sequence;
+		int center = snp_data[i].position;
 
 		for (int dist = min_distance; dist <= max_distance + 1; dist += 10) {
 
-			for (int length = 18; length < 29; length++) {
+			for (int len = 18; len < 29; len++) {
+
+				int start;
+				std::string primer_seq;
 
 				if (direction == "forward") {
-					int start = center + dist;
-					std::string intermediate = sequence.substr(start, start + length);
-					std::string primer_seq = reverse_complement(intermediate);
+					start = center + dist;
+					primer_seq = reverse_complement(sequence.substr(start, start + len));
 				}
 				else {
-					int start = center - dist - length;
-					std::string primer_Sec = sequence.substr(start, start+length);
+					start = center - dist - len;
+					primer_seq = reverse_complement(sequence.substr(start, start + len));
 				}
-				std::unordered_map<std::string, std::string> metrics = evaluate_primer(sequence);
 
-				if (metric.tm >= 60.0 && metric.tm < 65.0 &&
-					metrics.gc >= 40.0 && metrics.gc <= 60.0 &&
-					metrics.hairpin < 45.0 &&
-					metrics.homodimer < 45.0) {
+				// this doesn't currently actually do anything, I am not quite sure if I should work on this further I have to find out what the,
+				// primer 3 call is doing, this might take too long, or in fact, be impossible.
+				
+				std::unordered_map<std::string, std::string> metrics = evaluate_primer(primer_seq);
 
-					result.data.push_back(allele_spesific_primers.get(i));
+
+				if (metrics["tm"] >= 60.0 and metrics["tm"] <= 65.0 and
+					metrics["gc"] >= 40.0 and metrics["gc"] <= 60.0 and
+					metrics["hairpin"] < 45.0 and
+					metrics["homodimer"] < 45.0 ) {
+					
+					primer p;
+					p.snp_id = snp_id;
+					p.allele = allele;
+					p.sequence = sequence;
+					p.direction = direction;
+					
 
 					
 				}
-
-				
 			}
-			
 		}
-
-		
 	}
-
-
-
-    return result;
+	return matching_primers;
 }
 
 std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, double heterodimer_max){
@@ -276,8 +268,8 @@ std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, doub
 
 PYBIND11_MODULE(pcr_lib, m) {
     m.def("reverse_complement", &reverse_complement, "This function takes a string, and returns the reverse complement of the string or sequence.");
-    m.def("generate_allele_spesific_primers", &generate_allele_spesific_primers, "This function takes in a an array of primers or snp data and a minimum and maximun length, and returns a generated list of allele spesific primers.");
-    m.def("introduce_missmatch", &introduce_missmatch, "Takes in a sequence as a string, and a position, and returns a *list* of missmatches.");
+    m.def("generate_allele_specific_primers", &generate_allele_specific_primers, "This function takes in a an array of primers or snp data and a minimum and maximun length, and returns a generated list of allele specific primers.");
+    m.def("introduce_missmatch", &introduce_mismatch, "Takes in a sequence as a string, and a position, and returns a *list* of missmatches.");
     m.def("filter_primers", &filter_primers, "Takes in an array of primers, a tm min & max, a hairpin max, and a homodimer max, and returns the filtered list of primers.");
     m.def("rank_primers", &rank_primers, "Takes in an array of primers, and returns an ranked array of primers.");
     m.def("generate_matching_primers", &generate_matching_primers, "Takes in 2 arrays of primers, and a min & max distance, and returns an array of matching primers.");
@@ -286,12 +278,15 @@ PYBIND11_MODULE(pcr_lib, m) {
     py::class_<primer>(m, "primer")
         .def(py::init<>())
         .def_readwrite("rsid", &primer::rsid)
+        .def_readwrite("snp_id", &primer::snp_id)
         .def_readwrite("allele", &primer::allele)
-        .def_readwrite("primer_sequence", &primer::primer_sequence)
+        .def_readwrite("sequence", &primer::sequence)
         .def_readwrite("direction", &primer::direction)
-        .def_readwrite("length", &primer::length)
-        .def_readwrite("gc_content", &primer::gc_content)
+        .def_readwrite("score", &primer::score)
+        .def_readwrite("gc", &primer::gc)
+        .def_readwrite("tm", &primer::tm)
         .def_readwrite("hairpin", &primer::hairpin)
-        .def_readwrite("homodimer", &primer::homodimer);
-
+        .def_readwrite("homodimer", &primer::homodimer)
+        .def_readwrite("position", &primer::position)
+        .def_readwrite("length", &primer::length);
 }

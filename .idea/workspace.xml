@@ -30,7 +30,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce87fcd0-412b-4419-8d75-1484064ee61e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pcr_lib.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/pcr_lib.cpp" afterDir="false" />
@@ -149,8 +149,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.122" />
-        <option value="bundled-python-sdk-880ecab49056-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.122" />
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-PY-251.26094.141" />
+        <option value="bundled-python-sdk-9f8e2b94138c-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26094.141" />
       </set>
     </attachedChunks>
   </component>
@@ -181,7 +181,11 @@
       <workItem from="1752092731299" duration="4163000" />
       <workItem from="1752104475732" duration="3913000" />
       <workItem from="1752121479486" duration="1764000" />
-      <workItem from="1752277807128" duration="15859000" />
+      <workItem from="1752277807128" duration="19923000" />
+      <workItem from="1752302558963" duration="87000" />
+      <workItem from="1752344662299" duration="2507000" />
+      <workItem from="1752435934623" duration="1628000" />
+      <workItem from="1752508425289" duration="2707000" />
     </task>
     <servers />
   </component>
