@@ -1,7 +1,9 @@
 import pandas as pd
 import re 
 from Bio.Seq import Seq
-
+import logging
+from typing import Dict
+import primer3
 # # Sequence -> Sequence
 # def Reverse_Complement(sequence: str): #  -> str
     
@@ -55,18 +57,18 @@ def Evaluate_Primers(primer_seq: str): # -> Dict:
         - Handle primer3-py failures gracefully.
         - Add logging for failed evaluations.
         """
-    import logging
-    from typing import Dict
-    import primer3
+    print(f'this is the primer given {primer_seq}')
     # Setup logging
     logging.basicConfig(
+        # print('in set up logic')
         filename="primer_evaluation.log",
         level=logging.INFO,
+        # print('logging info')
         format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
     try:
-        result = primer3.bindings.designPrimers(
+        result = primer3.bindings.design_primers(
             {
                 "SEQUENCE_TEMPLATE": primer_seq,
                 "SEQUENCE_PRIMER": primer_seq
@@ -130,7 +132,7 @@ def Generate_Allele_Spesific_Primers(snp_data: pd.DataFrame, min_len: int = 18, 
     for _, row in snp_data.iterrows():#left this as it was. Need to look at how the data will actually come in
         all_primers.append(Find_Primers(row, min_len, max_len))#call the function again and again. My say is we batch by snpID or something and multiprocess a batch
         #starting a whole thread just for a couple for loops doesn't quite seem justified.
-
+    return all_primers
     # make an empty list of primers
     #iterate through each function calling the find primers function. 
     #this function is a paralizing shell that will house the true find primers function.
