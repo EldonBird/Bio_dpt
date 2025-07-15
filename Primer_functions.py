@@ -51,59 +51,14 @@ def Introduce_Mismatch(primer_sequence: str) -> str:
     return primer_sequence[:pos] + mismatch + primer_sequence[pos + 1:]
 
 
-def Evaluate_Primers(primer_seq: str): # -> Dict:
+def Evaluate_Primers(primer_dict: dict): # -> Dict:
     """
         Evaluate primer quality using primer3-py.
         TODO: Enhance error handling.
         - Handle primer3-py failures gracefully.
         - Add logging for failed evaluations.
         """
-    # print(f'this is the primer given {primer_seq}')
-    # # Setup logging
-    # logging.basicConfig(
-    #     # print('in set up logic')
-    #     filename="primer_evaluation.log",
-    #     level=logging.INFO,
-    #     # print('logging info')
-    #     format="%(asctime)s - %(levelname)s - %(message)s"
-    # )
 
-    # try:
-    #     result = primer3.bindings.design_primers(
-    #         {
-    #             "SEQUENCE_TEMPLATE": primer_seq,
-    #             "SEQUENCE_PRIMER": primer_seq
-    #         },
-    #         {
-    #             "PRIMER_OPT_SIZE": 20,
-    #             "PRIMER_MIN_SIZE": 18,
-    #             "PRIMER_MAX_SIZE": 28,
-    #             "PRIMER_OPT_TM": 62.5,
-    #             "PRIMER_MIN_TM": 60.0,
-    #             "PRIMER_MAX_TM": 65.0,
-    #             "PRIMER_MIN_GC": 40.0,
-    #             "PRIMER_MAX_GC": 60.0,
-    #             "PRIMER_MAX_HAIRPIN_TH": 45.0,
-    #             "PRIMER_MAX_SELF_ANY_TH": 45.0
-    #         }
-    #     )
-    #     return {
-    #         "tm": result.get("PRIMER_LEFT_0_TM", 0),
-    #         "gc_content": result.get("PRIMER_LEFT_0_GC_PERCENT", 0),
-    #         "hairpin": result.get("PRIMER_LEFT_0_HAIRPIN_TH", 999),
-    #         "homodimer": result.get("PRIMER_LEFT_0_SELF_ANY_TH", 999),
-    #         "success": True
-    #     }
-    # except Exception as e:
-    #     logging.error(f"Primer evaluation failed for sequence: {primer_seq}\nError: {str(e)}")
-    #     return {
-    #         "tm": 0,
-    #         "gc_content": 0,
-    #         "hairpin": 999,
-    #         "homodimer": 999,
-    #         "success": False
-    #     }
-        # print(f'this is the primer given {primer_seq}')
     # Setup logging
     logging.basicConfig(
         # print('in set up logic')
@@ -113,52 +68,44 @@ def Evaluate_Primers(primer_seq: str): # -> Dict:
         format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
-    try:
-        # Use primer3's analysis functions instead of design_primers
-        result = primer3.bindings.calc_tm(primer_seq)
-        # gc_content = primer3.bindings.calc_gc(primer_seq)
-        hairpin = primer3.bindings.calc_hairpin(primer_seq)
-        homodimer = primer3.bindings.calc_homodimer(primer_seq)
-        
-        return {
-            "tm": result,
-            # "gc_content": gc_content,
-            "hairpin": hairpin.tm if hasattr(hairpin, 'tm') else 0,
-            "homodimer": homodimer.tm if hasattr(homodimer, 'tm') else 0,
-            "success": True
-        }
-    except Exception as e:
-        logging.error(f"Primer evaluation failed for sequence: {primer_seq}\nError: {str(e)}")
-        print(primer_seq)
-        return {
-            "tm": 0,
-            "gc_content": 0,
-            "hairpin": 999,
-            "homodimer": 999,
-            "success": False
-        }
 
-def rank_primers(primers: pd.DataFrame, target_tm = 62.5, target_gc = 50) -> pd.DataFrame:
+    try:
+
+        # Use primer3's analysis functions instead of design_primers
+        result = primer3.bindings.calc_tm(primer_dict['primer_sequence'])
+        # gc_content = primer3.bindings.calc_gc(primer_seq)
+        hairpin = primer3.bindings.calc_hairpin(primer_dict['primer_sequence'])
+        homodimer = primer3.bindings.calc_homodimer(primer_dict['primer_sequence'])
+
+        primer_dict["tm"] = result
+        # "gc_content": gc_content,
+        primer_dict["hairpin"] = hairpin.tm if hasattr(hairpin, 'tm') else 0
+        primer_dict["homodimer"] = homodimer.tm if hasattr(homodimer, 'tm') else 0
+        primer_dict["success"] = True
+        return primer_dict
+    except Exception as e:
+        logging.error(f"Primer evaluation failed for sequence: {primer_dict['primer_sequence']}\nError: {str(e)}")
+        primer_dict["tm"] = 0
+        primer_dict["hairpin"] = 999
+        primer_dict["homodimer"] = 999
+        primer_dict["success"] = False
+        return primer_dict
+
+def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50) -> pd.DataFrame:
     """
     Rank primers based on Tm proximity to 62.5Â°C and GC content.
     TODO: Refine ranking criteria.
     - Consider weighting Tm vs. GC scores.
     - Add user-configurable ranking metrics.
     """
-    primers["tm_score"] = abs(primers["tm"] - target_tm)
-    primers["gc_score"] = abs(primers["gc_content"] - target_gc)
-    primers["score"] = primers["tm_score"] + primers["gc_score"] + primers["hairpin"] + primers["homodimer"]
+    for primer in primers:
+
+        primer["tm_score"] = abs(primer["tm"] - target_tm)
+        primer["gc_score"] = abs(primer["gc_content"] - target_gc)
+        primer["score"] = primer["tm_score"] + primer["gc_score"] + primer["hairpin"] + primer["homodimer"]
     return primers.sort_values("score").groupby(["snpID", "allele", "direction"]).head(5)
-    Rank primers based on Tm proximity to 62.5Â°C and GC content.
-    TODO: Refine ranking criteria.
-    - Consider weighting Tm vs. GC scores.
-    - Add user-configurable ranking metrics.
-    """
-    primers["tm_score"] = abs(primers["tm"] - target_tm)
-    primers["gc_score"] = abs(primers["gc_content"] - target_gc)
-    primers["score"] = primers["tm_score"] + primers["gc_score"] + primers["hairpin"] + primers["homodimer"]
-    return primers.sort_values("score").groupby(["snpID", "allele", "direction"]).head(5)
-    ...
+
+    
 
 def Filter_Primers(primers: pd.DataFrame, tm_min: float = 60.0, tm_max: float = 65.0, hairpin_max: float = 45.0, homodimer_max: float = 45.0): # -> pd.DataFrame:
     """
@@ -176,73 +123,51 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         - Add validation for sequence length and SNP position.
         """
     all_primers = []
+    # min_len += 1
+    # max_len += 1
     #made these two separate functions incase we want to parallelize them
     for snp_dict in snps_list:
-        all_primers.append(Find_Primers(snp_dict, min_len, max_len))#call the function again and again. My say is we batch by snpID or something and multiprocess a batch
-        #starting a whole thread just for a couple for loops doesn't quite seem justified.
+        this_allele_primers = []#a list of dictionaries
+        snp_id = snp_dict["snpID"]
+        allele = snp_dict["allele"]
+        sequence = snp_dict["sequence"]
+        snp_pos = snp_dict["position"]
+
+        forward = sequence[snp_pos - max_len :snp_pos+1]#this gets the largest segment.   
+        forward_mismatch = Introduce_Mismatch(forward)
+    
+        reverse = str(Seq(sequence[snp_pos:snp_pos+max_len+1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
+        reverse_mismatch = Introduce_Mismatch(reverse)
+
+        this_allele_primers.append(Make_Primers(this_allele_primers, forward_mismatch, min_len, max_len, snp_id, allele))
+        this_allele_primers.append(Make_Primers(this_allele_primers, reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
+ 
+        all_primers.append(this_allele_primers)
     return all_primers
-    # make an empty list of primers
-    #iterate through each function calling the find primers function. 
-    #this function is a paralizing shell that will house the true find primers function.
-    return all_primers
+   
 
-def Find_Primers(snp, min_len, max_len):
-    this_allele_primers = []#a list of dictionaries
-    snp_id = snp["snpID"]
-    allele = snp["allele"]
-    sequence = snp["sequence"]
-    snp_pos = snp["position"]
+def Make_Primers(list, seq, min_len, max_len, snp_id, allele, direction="forward"):
+    seq_length = len(seq)
 
-    # print(f'the snp: {sequence[(snp_pos-3):(snp_pos+5)]}')
-    # print(f'the snp Gone?: {sequence[:snp_pos]}')
-    print(f'the snp alone: {sequence[snp_pos]}')
-    forward = sequence[snp_pos - max_len :snp_pos+1]#this gets the largest segment.   
-    forward_mismatch = Introduce_Mismatch(forward)
-    forward_length = len(forward_mismatch)
-    # print(f'the forward: {forward}')
+    if seq_length >= min_len:
 
-    if forward_length >= min_len:
-        for length in range(max_len-min_len+1):#possible bug if the forward missmatch is smaller than the minimum length
-            # print(forward_mismatch[length:])
-            trimmed = forward_mismatch[length:]
-            # print(f'here\'s the sequence: {trimmed}')
-            this_allele_primers.append({#take this part out of the loop, so we can have one dictioanry that says the SNP ID and ALLELE and Dirrection, and then a list in that 
-                #dictioanry of sequenec and lengths. Storing the name over and over seems redundednt IDK
+        for length in range(max_len-min_len):#possible bug if the forward mismatch is smaller than the minimum length
+            
+            trimmed = seq[length:]
+            #take this part out of the loop, so we can have one dictionary that says the SNP ID and ALLELE and Direction, 
+            #and then a list in that dictionary of sequence and lengths. Storing the name over and over seems redundant IDK
+            list.append({
                 "snpID": snp_id,
                 "allele": allele,
                 "primer_sequence": trimmed,
-                "direction": "forward",
-                "length": forward_length-length
+                "direction": direction,
+                "length": seq_length-length
             })
-            
     else:
         print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {forward_length}")
 
 
-    # Reverse primer: downstream sequence, reverse complemented
-    # print(f"here's the sequence again: {sequence}")
-    # print(f'the thing before modify: {sequence[snp_pos:snp_pos+max_len+1]}')
-    reverse = str(Seq(sequence[snp_pos:snp_pos+max_len+1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
-    reverse_mismatch = Introduce_Mismatch(reverse)
 
-    reverse_length = len(reverse_mismatch)
-    
-    # print(f'the reverse: {reverse}')
-    if reverse_length >= min_len:
-        for length in range(max_len-min_len+1):
-            trimmed = reverse_mismatch[length:]
-            this_allele_primers.append({
-                "snpID": snp_id,
-                "allele": allele,
-                "primer_sequence": trimmed,
-                "direction": "reverse",
-                "length": reverse_length-length
-            })
-
-            
-    else:
-        print(f"The length of your reverse primer wasn't long enough. \n You needed one at least {min_len} long and it ended up only being {reverse_length}")
-    return this_allele_primers
 
 def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
     """
