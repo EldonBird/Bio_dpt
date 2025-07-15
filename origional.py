@@ -30,7 +30,7 @@ def fetch_snp_data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
                 snp_data.append({
                     "snpID": rsid,
                     "allele": allele,
-                    "sequence": flank_seq.replace(f"[{/'.join(alleles)}]", allele),
+                    "sequence": flank_seq.replace(f'[]', allele),
                     "position": flank_length  # SNP position
                 })
         return pd.DataFrame(snp_data)
