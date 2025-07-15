@@ -10,7 +10,7 @@ from typing import List # for type hinting
 # Ensembl REST API base URL
 ENSEMBL_REST = "https://rest.ensembl.org"
 
-def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
+def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> list[dict]:
     """
     Retrieves SNP data from the Ensembl API, including flanking sequences and alleles.
 
@@ -28,7 +28,7 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
         try:
             # Step 1: Get SNP mapping (chromosome + position info)
             var_resp = requests.get(f"{ENSEMBL_REST}/variation/homo_sapiens/{rsid}?", headers=headers)
-            print("Ooh piece of candy!")
+            print(f"getting info on {rsid}")
             var_resp.raise_for_status()
             var_data = var_resp.json()
 
@@ -40,7 +40,7 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
             # We'll just take the first mapping (usually sufficient for common SNPs)
             mapping = mappings[0]
             chrom = mapping["seq_region_name"]  # e.g., "11"
-            pos = int(mapping["start"]) - 1     # Convert to 0-based index
+            pos = int(mapping["start"])   
 
             # Extract allele string like "A/G" or "C/T"
             allele_str = mapping.get("allele_string", "")
@@ -52,16 +52,18 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
                 continue
 
             # Step 2: Fetch the flanking DNA sequence around the SNP
-            seq_start = max(1, pos + 1 - flank_length)  # 1-based for Ensemble 
-            seq_end = pos + 1 + flank_length 
+            seq_start = max(1, pos - flank_length)  # 1-based for Ensemble 
+            seq_end = pos + flank_length #might run off the end of the chromosome if very unlucky
             seq_url = f"{ENSEMBL_REST}/sequence/region/human/{chrom}:{seq_start}..{seq_end}:1?"
+            # print (f'chrom: {chrom}\nseq_start: {seq_start}\nseq_end: {seq_end}')
             seq_resp = requests.get(seq_url, headers={"Content-Type": "text/plain"})
-            print("Ooh (small) piece of candy!")
+            
             seq_resp.raise_for_status()
+          
             template_seq = seq_resp.text.strip()
 
             # Position of the SNP relative to the start of the fetched sequence
-            rel_pos = (pos + 1) - seq_start 
+            rel_pos = flank_length if seq_start > 1 else pos #should just be flanking length
 
             # Step 3: Replace the SNP base with each possible allele to simulate variation
             for allele in alleles:
@@ -90,9 +92,10 @@ def Fetch_SNP_Data(rsids: List[str], flank_length: int = 800) -> pd.DataFrame:
     # If nothing was successfully retrieved, return an empty DataFrame
     if not snp_data:
         print("No valid SNP data could be retrieved.")
-        return pd.DataFrame()
+        return []
+  
 
-    return pd.DataFrame(snp_data)
+    return snp_data
 
 
 
@@ -108,16 +111,26 @@ def Main():
         - Benchmark performance for large SNP sets.
         """
     
-    # snp_test = pd.DataFrame()
+    # real fetch snp
     # snp_df = Fetch_SNP_Data(["rs1799971"], 30)# just here for testing.  , "rs599839"
-    # print(snp_df)
+  
 
-    # primers = Generate_Allele_Spesific_Primers(snp_df)
+    # sudo data to speed up testing
+    snp_df = [{'snpID': 'rs1799971', 'allele': 'A', 'sequence': 'TGTGTTTGCACAGAAGAGTGCCCAGTGAAGAGACCTACTCCTTGGATCGCTTTGCGCAAAATCCACCCCTTTTCCCTCCTCCCTCCCTTCCAGCCTCCGAATCCCGCATGGCCCACGCTCCCCTCCTGCAGCGGTGCGGGGCAGGTGATGAGCCTCTGTGAACTACTAAGGTGGGAGGGGGCTATACGCAGAGGAGAATGTCAGATGCTCAGCTCGGTCCCCTCCGCCTGACGCTCCTCTCTGTCTCAGCCAGGACTGGTTTCTGTAAGAAACAGCAGGAGCTGTGGCAGCGGCGAAAGGAAGCGGCTGAGGCGCTTGGAACCCGAAAAGTCTCGGTGCTCCTGGCTACCTCGCACAGCGGTGCCCGCCCGGCCGTCAGTACCATGGACAGCAGCGCTGCCCCCACGAACGCCAGCAATTGCACTGATGCCTTGGCGTACTCAAGTTGCTCCCCAGCACCCAGCCCCGGTTCCTGGGTCAACTTGTCCCACTTAGATGGCAACCTGTCCGACCCATGCGGTCCGAACCGCACCGACCTGGGCGGGAGAGACAGCCTGTGCCCTCCGACCGGCAGTCCCTCCATGATCACGGCCATCACGATCATGGCCCTCTACTCCATCGTGTGCGTGGTGGGGCTCTTCGGAAACTTCCTGGTCATGTATGTGATTGTCAGGTAAGGAAAGCGCCAGGGCTCCGAGCGGAGGGTTCAGCGGCTTAAGGGGGTACAAAGAGACACCTAACTCCCAAGGCTCAATGTTGGGCGGGAGGATGAAAGAGGGGAGGTAAACTGGGGGGACTCTGGAGGAGACCACGGACAGTGATTGTTATTTCTATGAGAAAACCTACTTTTCTGTTTTTTCTTCAACTGATAAAGAAAGAATTCAAAATTTCAGGAGCAGAGAAGTTGCTTTGGTAAAAGCTACAAATGTCTAGGGGTGGGGGGCGGAGGGAAGCTATAGCATAGACTTGGAGCGCTTCCTTATACTGAGCAAAGAGGGCTC', 'position': 500}, {'snpID': 'rs1799971', 'allele': 'G', 'sequence': 'TGTGTTTGCACAGAAGAGTGCCCAGTGAAGAGACCTACTCCTTGGATCGCTTTGCGCAAAATCCACCCCTTTTCCCTCCTCCCTCCCTTCCAGCCTCCGAATCCCGCATGGCCCACGCTCCCCTCCTGCAGCGGTGCGGGGCAGGTGATGAGCCTCTGTGAACTACTAAGGTGGGAGGGGGCTATACGCAGAGGAGAATGTCAGATGCTCAGCTCGGTCCCCTCCGCCTGACGCTCCTCTCTGTCTCAGCCAGGACTGGTTTCTGTAAGAAACAGCAGGAGCTGTGGCAGCGGCGAAAGGAAGCGGCTGAGGCGCTTGGAACCCGAAAAGTCTCGGTGCTCCTGGCTACCTCGCACAGCGGTGCCCGCCCGGCCGTCAGTACCATGGACAGCAGCGCTGCCCCCACGAACGCCAGCAATTGCACTGATGCCTTGGCGTACTCAAGTTGCTCCCCAGCACCCAGCCCCGGTTCCTGGGTCAACTTGTCCCACTTAGATGGCGACCTGTCCGACCCATGCGGTCCGAACCGCACCGACCTGGGCGGGAGAGACAGCCTGTGCCCTCCGACCGGCAGTCCCTCCATGATCACGGCCATCACGATCATGGCCCTCTACTCCATCGTGTGCGTGGTGGGGCTCTTCGGAAACTTCCTGGTCATGTATGTGATTGTCAGGTAAGGAAAGCGCCAGGGCTCCGAGCGGAGGGTTCAGCGGCTTAAGGGGGTACAAAGAGACACCTAACTCCCAAGGCTCAATGTTGGGCGGGAGGATGAAAGAGGGGAGGTAAACTGGGGGGACTCTGGAGGAGACCACGGACAGTGATTGTTATTTCTATGAGAAAACCTACTTTTCTGTTTTTTCTTCAACTGATAAAGAAAGAATTCAAAATTTCAGGAGCAGAGAAGTTGCTTTGGTAAAAGCTACAAATGTCTAGGGGTGGGGGGCGGAGGGAAGCTATAGCATAGACTTGGAGCGCTTCCTTATACTGAGCAAAGAGGGCTC', 'position': 500}]
+
+    primers = Generate_Allele_Specific_Primers(snp_df)
     # print(primers)
+    
+    for small_list in primers:
+        # print(small_list)
+        for single_dict in small_list:
+            # print(single_dict)
+            print(single_dict)
+            print(Evaluate_Primers(single_dict["primer_sequence"]))
 
 
-
-
+# [{'snpID': 'rs1799971', 'allele': 'A', 'sequence': 'ATGGCAACCTG', 'position': 5}, 
+#  {'snpID': 'rs1799971', 'allele': 'G', 'sequence': 'ATGGCGACCTG', 'position': 5}]
 
 if(__name__ == "__main__"):
     Main()
