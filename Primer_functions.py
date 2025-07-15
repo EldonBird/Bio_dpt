@@ -113,8 +113,8 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
 
 def Filter_Primers(
     primers: pd.DataFrame,
-    tm_range: Tuple[float, float] = (60.0, 65.0),
-    gc_range: Tuple[float, float] = (40.0, 60.0),
+    tm_range: tuple[float, float] = (60.0, 65.0),
+    gc_range: tuple[float, float] = (40.0, 60.0),
     hairpin_dg_min: float = -9.0, # ΔG threshold for hairpins (less negative is better).
     homodimer_dg_min: float = -9.0, # ΔG threshold for homodimers.
     use_fallback: bool = True
@@ -135,7 +135,7 @@ def Filter_Primers(
     if not required_cols.issubset(primers.columns):
         print("Metrics not found, running evaluation...")
         # Calculate metrics for each primer sequence.
-        metrics_df = primers['primer_sequence'].apply(evaluate_primer).apply(pd.Series)
+        metrics_df = primers['primer_sequence'].apply(Evaluate_Primers).apply(pd.Series)
         # Join the new metrics back to the original primer data.
         primers_with_metrics = primers.join(metrics_df)
     else:
@@ -227,7 +227,7 @@ def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> 
                 "length": seq_length-length
             })
     else:
-        print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {forward_length}")
+        print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {seq_length}")
     return primers
 
 
