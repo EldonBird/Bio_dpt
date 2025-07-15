@@ -1,7 +1,7 @@
 from Multiplex import *
 from Output import *
 from Primer_functions import *
-import numpy as np
+
 import primer3
 import re # run 'pip install regex' if not already installed
 import time # to handle rate limiting
