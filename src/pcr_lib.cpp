@@ -8,14 +8,13 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-// #include <bits/fs_ops.h> // enable these if on linux...
-// #include <pstl/execution_defs.h>
-#include <filesystem> // and this for windows...
+#include <bits/fs_ops.h> // enable these if on linux...
+#include <pstl/execution_defs.h> // other one
+// #include <filesystem> // and this for windows...
 
 
 namespace fs = std::filesystem;
 namespace py = pybind11;
-
 
 class primer {
     public:
@@ -35,6 +34,31 @@ class primer {
 		int position;
         int length;
 };
+
+std::vector<primer> df_to_listprimers(const py::object& df) {
+	std::vector<primer> result;
+
+	py::list ids = df.attr("__getitem__")("snp_id");
+	py::list allele = df.attr("__getitem__")("allele");
+	py::list sequence = df.attr("__getitem__")("sequence");
+	py::list positions = df.attr("__getitem__")("position");
+
+	auto length = py::len(df);
+
+	for (size_t i = 0; i < length; i++) {
+
+		primer p;
+		p.snp_id = ids[i].cast<std::string>();
+		p.allele = allele[i].cast<std::string>();
+		p.sequence = sequence[i].cast<std::string>();
+		p.position = positions[i].cast<int>();
+		result.push_back(p);
+		
+	}
+
+	
+	return result;
+}
 
 std::string reverse_complement(std::string s) {
   

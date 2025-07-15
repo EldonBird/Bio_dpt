@@ -15,5 +15,6 @@ We will pick a day to build and update the function, but otherwise feel free to 
 
 project commands (mainly for Hunter)
 
-* python setup.py build_ext --inplace
+* python setup_win.py build_ext --inplace
+* python setup_lin.py build_ext --inplace
 * cmake --build . (please only build inside the src\build.)
