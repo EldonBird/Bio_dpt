@@ -4,6 +4,7 @@ from Bio.Seq import Seq
 import logging
 from typing import Dict
 import primer3
+
 # # Sequence -> Sequence
 # def Reverse_Complement(sequence: str): #  -> str
     
@@ -154,7 +155,7 @@ def Filter_Primers(primers: pd.DataFrame, tm_min: float = 60.0, tm_max: float = 
         """
 
 
-def Generate_Allele_Spesific_Primers(snp_data: pd.DataFrame, min_len: int = 18, max_len: int = 28): # -> pd.DataFrame:
+def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, max_len: int = 28): # -> pd.DataFrame:
     """
         Generate allele-specific primers (forward/reverse) ending at the SNP.
         TODO: Optimize for large SNP sets.
@@ -163,31 +164,37 @@ def Generate_Allele_Spesific_Primers(snp_data: pd.DataFrame, min_len: int = 18, 
         """
     all_primers = []
     #made these two separate functions incase we want to parallelize them
-    for _, row in snp_data.iterrows():#left this as it was. Need to look at how the data will actually come in
-        all_primers.append(Find_Primers(row, min_len, max_len))#call the function again and again. My say is we batch by snpID or something and multiprocess a batch
+    for snp_dict in snps_list:
+        all_primers.append(Find_Primers(snp_dict, min_len, max_len))#call the function again and again. My say is we batch by snpID or something and multiprocess a batch
         #starting a whole thread just for a couple for loops doesn't quite seem justified.
     return all_primers
     # make an empty list of primers
     #iterate through each function calling the find primers function. 
     #this function is a paralizing shell that will house the true find primers function.
+    return all_primers
 
-def Find_Primers(snp_row, min_len, max_len):
-    this_allele_primers = []
-    snp_id = snp_row["snpID"]
-    allele = snp_row["allele"]
-    sequence = snp_row["sequence"]
-    center = snp_row["position"]
+def Find_Primers(snp, min_len, max_len):
+    this_allele_primers = []#a list of dictionaries
+    snp_id = snp["snpID"]
+    allele = snp["allele"]
+    sequence = snp["sequence"]
+    snp_pos = snp["position"]
 
-
-    forward = sequence[center - max_len + 1 :center + 1]#this gets the largest segment.   
+    # print(f'the snp: {sequence[(snp_pos-3):(snp_pos+5)]}')
+    # print(f'the snp Gone?: {sequence[:snp_pos]}')
+    print(f'the snp alone: {sequence[snp_pos]}')
+    forward = sequence[snp_pos - max_len :snp_pos+1]#this gets the largest segment.   
     forward_mismatch = Introduce_Mismatch(forward)
     forward_length = len(forward_mismatch)
-   
+    # print(f'the forward: {forward}')
 
     if forward_length >= min_len:
-        for length in range(max_len-(min_len-1)):#possible bug if the forward missmatch is smaller than the minimum length
+        for length in range(max_len-min_len+1):#possible bug if the forward missmatch is smaller than the minimum length
+            # print(forward_mismatch[length:])
             trimmed = forward_mismatch[length:]
-            this_allele_primers.append({
+            # print(f'here\'s the sequence: {trimmed}')
+            this_allele_primers.append({#take this part out of the loop, so we can have one dictioanry that says the SNP ID and ALLELE and Dirrection, and then a list in that 
+                #dictioanry of sequenec and lengths. Storing the name over and over seems redundednt IDK
                 "snpID": snp_id,
                 "allele": allele,
                 "primer_sequence": trimmed,
@@ -201,14 +208,16 @@ def Find_Primers(snp_row, min_len, max_len):
 
     # Reverse primer: downstream sequence, reverse complemented
     # print(f"here's the sequence again: {sequence}")
-    reverse = str(Seq(sequence[center + 1:center+max_len-1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
+    # print(f'the thing before modify: {sequence[snp_pos:snp_pos+max_len+1]}')
+    reverse = str(Seq(sequence[snp_pos:snp_pos+max_len+1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
     reverse_mismatch = Introduce_Mismatch(reverse)
+
     reverse_length = len(reverse_mismatch)
     
-
+    # print(f'the reverse: {reverse}')
     if reverse_length >= min_len:
-        for length in range(max_len-(min_len-1)):
-            trimmed = forward_mismatch[length:]
+        for length in range(max_len-min_len+1):
+            trimmed = reverse_mismatch[length:]
             this_allele_primers.append({
                 "snpID": snp_id,
                 "allele": allele,
@@ -216,10 +225,11 @@ def Find_Primers(snp_row, min_len, max_len):
                 "direction": "reverse",
                 "length": reverse_length-length
             })
+
             
     else:
         print(f"The length of your reverse primer wasn't long enough. \n You needed one at least {min_len} long and it ended up only being {reverse_length}")
-    return pd.DataFrame(this_allele_primers)
+    return this_allele_primers
 
 def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
     """
