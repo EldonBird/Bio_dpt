@@ -72,12 +72,12 @@ def Evaluate_Primers(primer_dict: dict): # -> Dict:
     try:
 
         # Use primer3's analysis functions instead of design_primers
-        result = primer3.bindings.calc_tm(primer_dict['primer_sequence'])
+        tm_result = primer3.bindings.calc_tm(primer_dict['primer_sequence'])
         # gc_content = primer3.bindings.calc_gc(primer_seq)
         hairpin = primer3.bindings.calc_hairpin(primer_dict['primer_sequence'])
         homodimer = primer3.bindings.calc_homodimer(primer_dict['primer_sequence'])
 
-        primer_dict["tm"] = result
+        primer_dict["tm"] = tm_result
         # "gc_content": gc_content,
         primer_dict["hairpin"] = hairpin.tm if hasattr(hairpin, 'tm') else 0
         primer_dict["homodimer"] = homodimer.tm if hasattr(homodimer, 'tm') else 0
@@ -99,10 +99,11 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50) -> pd.Da
     - Add user-configurable ranking metrics.
     """
     for primer in primers:
-
+        primer = Evaluate_Primers(primer)
         primer["tm_score"] = abs(primer["tm"] - target_tm)
-        primer["gc_score"] = abs(primer["gc_content"] - target_gc)
-        primer["score"] = primer["tm_score"] + primer["gc_score"] + primer["hairpin"] + primer["homodimer"]
+        # primer["gc_score"] = abs(primer["gc_content"] - target_gc)
+        primer["score"] = primer["tm_score"] + primer["hairpin"] + primer["homodimer"]#+ primer["gc_score"] 
+
     return primers.sort_values("score").groupby(["snpID", "allele", "direction"]).head(5)
 
     
@@ -123,9 +124,9 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         - Add validation for sequence length and SNP position.
         """
     all_primers = []
-    # min_len += 1
-    # max_len += 1
-    #made these two separate functions incase we want to parallelize them
+    min_len -= 2 #don't know why but these need to have 2 and 1 removed from the inputs to get the desired lengths
+    max_len -= 1
+
     for snp_dict in snps_list:
         this_allele_primers = []#a list of dictionaries
         snp_id = snp_dict["snpID"]
@@ -139,8 +140,8 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         reverse = str(Seq(sequence[snp_pos:snp_pos+max_len+1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
         reverse_mismatch = Introduce_Mismatch(reverse)
 
-        this_allele_primers.append(Make_Primers(this_allele_primers, forward_mismatch, min_len, max_len, snp_id, allele))
-        this_allele_primers.append(Make_Primers(this_allele_primers, reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
+        this_allele_primers.extend(Make_Primers(this_allele_primers, forward_mismatch, min_len, max_len, snp_id, allele))
+        this_allele_primers.extend(Make_Primers(this_allele_primers, reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
  
         all_primers.append(this_allele_primers)
     return all_primers
@@ -150,19 +151,17 @@ def Make_Primers(list, seq, min_len, max_len, snp_id, allele, direction="forward
     seq_length = len(seq)
 
     if seq_length >= min_len:
-
         for length in range(max_len-min_len):#possible bug if the forward mismatch is smaller than the minimum length
-            
             trimmed = seq[length:]
             #take this part out of the loop, so we can have one dictionary that says the SNP ID and ALLELE and Direction, 
             #and then a list in that dictionary of sequence and lengths. Storing the name over and over seems redundant IDK
-            list.append({
+            yield {
                 "snpID": snp_id,
                 "allele": allele,
                 "primer_sequence": trimmed,
                 "direction": direction,
                 "length": seq_length-length
-            })
+            }
     else:
         print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {forward_length}")
 
