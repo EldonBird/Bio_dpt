@@ -234,15 +234,16 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 				}
 
 				// this doesn't currently actually do anything, I am not quite sure if I should work on this further I have to find out what the,
-				// primer 3 call is doing, this might take too long, or in fact, be impossible.
+				// primer 3 call is doing, this might take too long, or in fact, be impossible. Got rid of the evaluate primers, we decided that we didn't
+				// really understand what it was doing in comparison to filter/rank. We can re add it when needed when the logic is understood.
 				
-				std::unordered_map<std::string, float> metrics = evaluate_primer(primer_seq);
+				//std::unordered_map<std::string, float> metrics = evaluate_primer(primer_seq);
 
 
-				if (metrics["tm"] >= 60.0 and metrics["tm"] <= 65.0 and
-					metrics["gc"] >= 40.0 and metrics["gc"] <= 60.0 and
-					metrics["hairpin"] < 45.0 and
-					metrics["homodimer"] < 45.0 ) {
+				// if (metrics["tm"] >= 60.0 and metrics["tm"] <= 65.0 and
+				// 	metrics["gc"] >= 40.0 and metrics["gc"] <= 60.0 and
+				// 	metrics["hairpin"] < 45.0 and
+				// 	metrics["homodimer"] < 45.0 ) {
 					
 					primer p;
 					p.snp_id = snp_id;
@@ -252,7 +253,7 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 					
 
 					
-				}
+				//}
 			}
 		}
 	}

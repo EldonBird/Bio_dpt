@@ -30,6 +30,9 @@
   <component name="ChangeListManager">
     <list default="true" id="ce87fcd0-412b-4419-8d75-1484064ee61e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/temp.linux-x86_64-cpython-313/src/pcr_lib.o" beforeDir="false" afterPath="$PROJECT_DIR$/build/temp.linux-x86_64-cpython-313/src/pcr_lib.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pcr_lib.cpython-313-x86_64-linux-gnu.so" beforeDir="false" afterPath="$PROJECT_DIR$/pcr_lib.cpython-313-x86_64-linux-gnu.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pcr_lib.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/pcr_lib.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -105,6 +108,11 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Bio_dpt">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Bio_dpt" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Bio_dpt" TARGET_NAME="Bio_dpt" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Bio_dpt" RUN_TARGET_NAME="Bio_dpt">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
