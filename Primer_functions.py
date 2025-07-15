@@ -149,6 +149,15 @@ def rank_primers(primers: pd.DataFrame, target_tm = 62.5, target_gc = 50) -> pd.
     primers["gc_score"] = abs(primers["gc_content"] - target_gc)
     primers["score"] = primers["tm_score"] + primers["gc_score"] + primers["hairpin"] + primers["homodimer"]
     return primers.sort_values("score").groupby(["snpID", "allele", "direction"]).head(5)
+    Rank primers based on Tm proximity to 62.5Â°C and GC content.
+    TODO: Refine ranking criteria.
+    - Consider weighting Tm vs. GC scores.
+    - Add user-configurable ranking metrics.
+    """
+    primers["tm_score"] = abs(primers["tm"] - target_tm)
+    primers["gc_score"] = abs(primers["gc_content"] - target_gc)
+    primers["score"] = primers["tm_score"] + primers["gc_score"] + primers["hairpin"] + primers["homodimer"]
+    return primers.sort_values("score").groupby(["snpID", "allele", "direction"]).head(5)
     ...
 
 def Filter_Primers(primers: pd.DataFrame, tm_min: float = 60.0, tm_max: float = 65.0, hairpin_max: float = 45.0, homodimer_max: float = 45.0): # -> pd.DataFrame:
