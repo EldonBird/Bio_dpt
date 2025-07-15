@@ -75,7 +75,7 @@ std::string introduce_mismatch(std::string primer_sequence) {
 		throw std::invalid_argument("Invalid Sequence, Not larger than 3 : " + primer_sequence);
 	}
 
-	int position = primer_sequence.length() - 3;
+	size_t position = primer_sequence.length() - 3;
 	char base = primer_sequence[position];
 	char mismatch = complement[base];
 
@@ -262,7 +262,7 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 	return matching_primers;
 }
 
-std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, doubel heterodimer_max){
+std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, double heterodimer_max){
   std::vector<primer> result;
 
 	
