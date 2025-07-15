@@ -8,8 +8,10 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <bits/fs_ops.h>
-#include <pstl/execution_defs.h>
+// #include <bits/fs_ops.h> // enable these if on linux...
+// #include <pstl/execution_defs.h>
+#include <filesystem> // and this for windows...
+
 
 namespace fs = std::filesystem;
 namespace py = pybind11;
@@ -260,7 +262,7 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 	return matching_primers;
 }
 
-std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, double heterodimer_max){
+std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, doubel heterodimer_max){
   std::vector<primer> result;
 
 	

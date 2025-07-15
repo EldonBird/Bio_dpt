@@ -7,7 +7,7 @@ ext_modules = [
             ["src/pcr_lib.cpp"],
             include_dirs=[pybind11.get_include()],
             language='c++',
-            extra_compile_args=["-std=c++17"],
+            extra_compile_args=["/std:c++20"]
         )
 ]
 
