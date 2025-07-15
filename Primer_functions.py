@@ -91,20 +91,25 @@ def Evaluate_Primers(primer_dict: dict): # -> Dict:
         primer_dict["success"] = False
         return primer_dict
 
-def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50) -> pd.DataFrame:
+def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism = 5) -> list[dict]:
     """
     Rank primers based on Tm proximity to 62.5Â°C and GC content.
     TODO: Refine ranking criteria.
     - Consider weighting Tm vs. GC scores.
     - Add user-configurable ranking metrics.
     """
+    evaluated_primers = []
     for primer in primers:
-        primer = Evaluate_Primers(primer)
+        evaluated_primers.append(Evaluate_Primers(primer))
         primer["tm_score"] = abs(primer["tm"] - target_tm)
         # primer["gc_score"] = abs(primer["gc_content"] - target_gc)
         primer["score"] = primer["tm_score"] + primer["hairpin"] + primer["homodimer"]#+ primer["gc_score"] 
 
-    return primers.sort_values("score").groupby(["snpID", "allele", "direction"]).head(5)
+
+    evaluated_primers.sort(key=lambda x: x["score"])
+
+    
+    return evaluated_primers[:optimism]
 
     
 
@@ -140,31 +145,31 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         reverse = str(Seq(sequence[snp_pos:snp_pos+max_len+1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
         reverse_mismatch = Introduce_Mismatch(reverse)
 
-        this_allele_primers.extend(Make_Primers(this_allele_primers, forward_mismatch, min_len, max_len, snp_id, allele))
-        this_allele_primers.extend(Make_Primers(this_allele_primers, reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
+        this_allele_primers.append(Make_Primers(forward_mismatch, min_len, max_len, snp_id, allele))
+        this_allele_primers.append(Make_Primers(reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
  
         all_primers.append(this_allele_primers)
     return all_primers
    
 
-def Make_Primers(list, seq, min_len, max_len, snp_id, allele, direction="forward"):
+def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> list[dict]: 
     seq_length = len(seq)
-
+    primers = []
     if seq_length >= min_len:
         for length in range(max_len-min_len):#possible bug if the forward mismatch is smaller than the minimum length
             trimmed = seq[length:]
             #take this part out of the loop, so we can have one dictionary that says the SNP ID and ALLELE and Direction, 
             #and then a list in that dictionary of sequence and lengths. Storing the name over and over seems redundant IDK
-            yield {
+            primers.append({
                 "snpID": snp_id,
                 "allele": allele,
                 "primer_sequence": trimmed,
                 "direction": direction,
                 "length": seq_length-length
-            }
+            })
     else:
         print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {forward_length}")
-
+    return primers
 
 
 
