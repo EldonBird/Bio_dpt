@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <pybind11/stl.h>
 #include <bits/fs_ops.h> // enable these if on linux...
 #include <pstl/execution_defs.h> // other one
 // #include <filesystem> // and this for windows...
@@ -59,6 +60,15 @@ std::vector<primer> df_to_listprimers(const py::object& df) {
 	
 	return result;
 }
+
+py::object& df listprimers_to_df(vector<primer> data) {
+
+
+
+
+	
+}
+
 
 std::string reverse_complement(std::string s) {
   
@@ -287,12 +297,13 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 }
 
 std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, double heterodimer_max){
-  std::vector<primer> result;
+	std::vector<primer> result;
 
 	
 	
+	
 
-  return result;
+	return result;
 }
 
 
@@ -302,11 +313,13 @@ std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, doub
 PYBIND11_MODULE(pcr_lib, m) {
     m.def("reverse_complement", &reverse_complement, "This function takes a string, and returns the reverse complement of the string or sequence.");
     m.def("generate_allele_specific_primers", &generate_allele_specific_primers, "This function takes in a an array of primers or snp data and a minimum and maximun length, and returns a generated list of allele specific primers.");
-    m.def("introduce_missmatch", &introduce_mismatch, "Takes in a sequence as a string, and a position, and returns a *list* of missmatches.");
+    m.def("introduce_mismatch", &introduce_mismatch, "Takes in a sequence as a string, and a position, and returns a *list* of missmatches.");
     m.def("filter_primers", &filter_primers, "Takes in an array of primers, a tm min & max, a hairpin max, and a homodimer max, and returns the filtered list of primers.");
     m.def("rank_primers", &rank_primers, "Takes in an array of primers, and returns an ranked array of primers.");
     m.def("generate_matching_primers", &generate_matching_primers, "Takes in 2 arrays of primers, and a min & max distance, and returns an array of matching primers.");
     m.def("check_multiplex_compatibility", &check_multiplex_compatibility, "Takes in a list of primers, and a heterodimer maximun, and returns an array of all possible primer combinations? REDO THIS ONE!!!!!!!!!!!!!!!");
+    m.def("df_to_listprimers", &df_to_listprimers, "df to list of primers :)");
+    m.def("listprimers_to_df", &listprimers_to_df, "list of primers to pandas df ;)");
 
     py::class_<primer>(m, "primer")
         .def(py::init<>())
