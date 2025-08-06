@@ -121,14 +121,7 @@ def Main():
     primers = Generate_Allele_Specific_Primers(snp_df, 10, 30)
     # print(primers)
     
-    for snp in primers:
-        # for direction_primer in snp:
-            print(rank_primers(snp[0]))
-        # print(small_list)
-        # for single_dict in small_list:
-        #     # print(single_dict)
-        #     # print(single_dict)
-            # Evaluate_Primers(single_dict)
+    # for snp in primers:
 
 
 

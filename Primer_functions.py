@@ -5,6 +5,13 @@ import logging
 from typing import Dict
 import primer3
 
+# the order is 
+# generate allele specific (and evaluate)
+# generate matching (and evaluate)
+# filter
+# rank
+
+
 # # Sequence -> Sequence
 # def Reverse_Complement(sequence: str): #  -> str
     
@@ -104,27 +111,25 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
         - Consider weighting Tm vs. GC scores.
         - Add user-configurable ranking metrics.
         """
-    evaluated_primers = []
     for primer in primers:
-        evaluated_primers.append(Evaluate_Primers(primer))
         primer["tm_score"] = abs(primer["tm"] - target_tm)
         primer["gc_score"] = abs(primer["gc_content"] - target_gc)
         primer["score"] = primer["tm_score"] + primer["hairpin_dg"] + primer["homodimer_dg"] + primer["gc_score"] 
 
 
-    evaluated_primers.sort(key=lambda x: x["score"])
+    primers.sort(key=lambda x: x["score"])
 
     
-    return evaluated_primers[:optimism]
+    return primers[:optimism]
 
 def Filter_Primers(
-    primers: list[dict],
+    primers: pd.DataFrame,
     tm_range: tuple[float, float] = (60.0, 65.0),
     gc_range: tuple[float, float] = (40.0, 60.0),
     hairpin_dg_min: float = -9.0, # ΔG threshold for hairpins (less negative is better).
     homodimer_dg_min: float = -9.0, # ΔG threshold for homodimers.
     use_fallback: bool = True
-) -> list[dict]:
+) -> pd.DataFrame:
     """
     Evaluates (if necessary) and filters primers based on quality metrics.
     - Tm must be within tm_range.
@@ -133,7 +138,7 @@ def Filter_Primers(
     """
     # Immediately return if the input DataFrame is empty.
     if primers.empty:
-        return []
+        return pd.DataFrame()
     
     # --- Evaluation Step ---
     # Define the set of required metric columns.
@@ -185,8 +190,128 @@ def Filter_Primers(
     print("WARNING: No primers passed filtering, even with relaxed criteria.")
     return pd.DataFrame()
 
-
-def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, max_len: int = 28): # -> pd.DataFrame:
+def Filter_Primers_List( #it filters each side's forward snp (with soft filtering) and reverse. That is to say we can pass in a list of dictionarys as long as
+        #the forward and reverse complement are together. That all it's filtering against 
+    primers: list[list[dict]],
+    tm_range: tuple[float, float] = (60.0, 65.0),
+    gc_range: tuple[float, float] = (40.0, 60.0),
+    hairpin_dg_min: float = -9.0,  # ΔG threshold for hairpins (less negative is better).
+    homodimer_dg_min: float = -9.0,  # ΔG threshold for homodimers.
+    use_fallback: bool = True
+) -> list[list[dict]]:
+    """
+    Evaluates (if necessary) and filters primers based on quality metrics.
+    - Tm must be within tm_range.
+    - GC% must be within gc_range.
+    - Hairpin and homodimer ΔG must be weaker than the threshold (less negative, i.e., > min).
+    
+    Args:
+        primers: List of lists of dictionaries, where each inner list represents a group
+                and each dict represents a primer with its properties.
+    """
+    # Immediately return if the input list is empty.
+    if not primers:
+        return []
+    
+    # --- Helper Functions ---
+    def has_required_metrics(primer_dict: dict) -> bool:
+        """Check if a primer dict has all required metric columns."""
+        required_cols = {'tm', 'gc_content', 'hairpin_dg', 'homodimer_dg'}
+        return required_cols.issubset(primer_dict.keys())
+    
+    def evaluate_and_add_metrics(primer_dict: dict) -> dict:
+        """Add metrics to a primer dict if they're missing."""
+        if has_required_metrics(primer_dict):
+            return primer_dict
+        
+        # Create a copy to avoid modifying the original
+        updated_primer = primer_dict.copy()
+        
+        # Calculate metrics (assuming Evaluate_Primers returns a dict)
+        if 'primer_sequence' in primer_dict:
+            metrics = Evaluate_Primers(primer_dict['primer_sequence'])
+            updated_primer.update(metrics)
+        
+        return updated_primer
+    
+    def passes_filter(primer_dict: dict, strict: bool = True) -> bool:
+        """Check if a primer passes the filtering criteria."""
+        # Check if all required metrics are present
+        if not has_required_metrics(primer_dict):
+            return False
+        
+        if strict:
+            # Strict filtering criteria
+            return (
+                tm_range[0] <= primer_dict['tm'] <= tm_range[1] and
+                gc_range[0] <= primer_dict['gc_content'] <= gc_range[1] and
+                primer_dict['hairpin_dg'] > hairpin_dg_min and
+                primer_dict['homodimer_dg'] > homodimer_dg_min
+            )
+        else:
+            # Relaxed filtering criteria
+            return (
+                (tm_range[0] - 2.0) <= primer_dict['tm'] <= (tm_range[1] + 2.0) and
+                (gc_range[0] - 5.0) <= primer_dict['gc_content'] <= (gc_range[1] + 5.0) and
+                primer_dict['hairpin_dg'] > (hairpin_dg_min - 2.0) and
+                primer_dict['homodimer_dg'] > (homodimer_dg_min - 2.0)
+            )
+    
+    # --- Processing ---
+    processed_primers = []
+    
+    for primer_group in primers:
+        # Skip empty groups
+        if not primer_group:
+            continue
+            
+        # --- Evaluation Step ---
+        # Check if any primer in the group needs metrics evaluation
+        needs_evaluation = any(not has_required_metrics(primer) for primer in primer_group)
+        
+        if needs_evaluation:
+            print("Metrics not found, running evaluation...")
+            # Add metrics to primers that need them
+            primers_with_metrics = [evaluate_and_add_metrics(primer) for primer in primer_group]
+        else:
+            primers_with_metrics = primer_group
+        
+        # --- Strict Filtering Logic ---
+        strict_results = [
+            {**primer, 'filter_level': 'strict'} 
+            for primer in primers_with_metrics 
+            if passes_filter(primer, strict=True)
+        ]
+        
+        # If any primers passed the strict filter, add this group to results
+        if strict_results:
+            processed_primers.append(strict_results)
+            continue
+        
+        # --- Fallback Logic ---
+        if use_fallback:
+            print("WARNING: No primers passed strict filtering. Applying relaxed criteria.")
+            relaxed_results = [
+                {**primer, 'filter_level': 'relaxed'} 
+                for primer in primers_with_metrics 
+                if passes_filter(primer, strict=False)
+            ]
+            
+            # If any primers passed the relaxed filter, add this group to results
+            if relaxed_results:
+                processed_primers.append(relaxed_results)
+                continue
+        
+        # If no primers pass even the relaxed criteria for this group, skip it
+        print("WARNING: No primers in group passed filtering, even with relaxed criteria.")
+    
+    return processed_primers
+def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, max_len: int = 28) -> list[list[list[dict]]]:
+    # make primers makes a dictionary for every length of one direction of an SNP.
+    # those dictionaries are stored in a list, so a list for forward and a list for backward
+    # those lists are stored in another list, one for each SNP. 
+    # then those are stored in one big list, a list of all SNP given this session.
+    # list_of_every_SNP[list_of_forward_and_reverse_directions[list_of_dictionaries[dictionary_of_particular_length]]]
     """
         Generate allele-specific primers (forward/reverse) ending at the SNP.
         TODO: Optimize for large SNP sets.
@@ -225,13 +350,15 @@ def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> 
             trimmed = seq[length:]
             #take this part out of the loop, so we can have one dictionary that says the SNP ID and ALLELE and Direction, 
             #and then a list in that dictionary of sequence and lengths. Storing the name over and over seems redundant IDK
-            primers.append({
+            primary_primer= {
                 "snpID": snp_id,
                 "allele": allele,
                 "primer_sequence": trimmed,
                 "direction": direction,
                 "length": seq_length-length
-            })
+            }
+            primers.append(Evaluate_Primers(primary_primer))#Evaluate primers was built to handle one dictionary at a time. Adding it here saves time by avoiding an extra loop. 
+            #maybe avoid calling the function all together by passing Evaluate_Primers directly into make_primers
     else:
         print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {seq_length}")
     return primers
