@@ -49,7 +49,12 @@ def Introduce_Mismatch(primer_sequence: str) -> str:
 
     # Replace the base with its mismatch
     return primer_sequence[:pos] + mismatch + primer_sequence[pos + 1:]
-
+def Calc_GC_Content(sequence: str):
+    gc_total = 0
+    for nucleotide in sequence:
+        if nucleotide == 'G' or nucleotide == 'C':
+            gc_total += 1
+    return gc_total/len(sequence)
 
 def Evaluate_Primers(primer_dict: dict) -> Dict:
     """
@@ -73,21 +78,22 @@ def Evaluate_Primers(primer_dict: dict) -> Dict:
 
         # Use primer3's analysis functions instead of design_primers
         tm_result = primer3.bindings.calc_tm(primer_dict['primer_sequence'])
-        # gc_content = primer3.bindings.calc_gc(primer_seq)
+        gc_content = Calc_GC_Content(primer_dict['primer_sequence'])
         hairpin = primer3.bindings.calc_hairpin(primer_dict['primer_sequence'])
         homodimer = primer3.bindings.calc_homodimer(primer_dict['primer_sequence'])
 
         primer_dict["tm"] = tm_result
-        # "gc_content": gc_content,
-        primer_dict["hairpin"] = hairpin.tm if hasattr(hairpin, 'tm') else 0
-        primer_dict["homodimer"] = homodimer.tm if hasattr(homodimer, 'tm') else 0
+        primer_dict["gc_content"] = gc_content
+        primer_dict["hairpin_dg"] = hairpin.tm if hasattr(hairpin, 'tm') else 0
+        primer_dict["homodimer_dg"] = homodimer.tm if hasattr(homodimer, 'tm') else 0
         primer_dict["success"] = True
         return primer_dict
     except Exception as e:
         logging.error(f"Primer evaluation failed for sequence: {primer_dict['primer_sequence']}\nError: {str(e)}")
         primer_dict["tm"] = 0
-        primer_dict["hairpin"] = 999
-        primer_dict["homodimer"] = 999
+        primer_dict["gc_content"] = 0
+        primer_dict["hairpin_dg"] = 999
+        primer_dict["homodimer_dg"] = 999
         primer_dict["success"] = False
         return primer_dict
 
@@ -102,8 +108,8 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
     for primer in primers:
         evaluated_primers.append(Evaluate_Primers(primer))
         primer["tm_score"] = abs(primer["tm"] - target_tm)
-        # primer["gc_score"] = abs(primer["gc_content"] - target_gc)
-        primer["score"] = primer["tm_score"] + primer["hairpin"] + primer["homodimer"]#+ primer["gc_score"] 
+        primer["gc_score"] = abs(primer["gc_content"] - target_gc)
+        primer["score"] = primer["tm_score"] + primer["hairpin_dg"] + primer["homodimer_dg"] + primer["gc_score"] 
 
 
     evaluated_primers.sort(key=lambda x: x["score"])
@@ -112,13 +118,13 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
     return evaluated_primers[:optimism]
 
 def Filter_Primers(
-    primers: pd.DataFrame,
+    primers: list[dict],
     tm_range: tuple[float, float] = (60.0, 65.0),
     gc_range: tuple[float, float] = (40.0, 60.0),
     hairpin_dg_min: float = -9.0, # ΔG threshold for hairpins (less negative is better).
     homodimer_dg_min: float = -9.0, # ΔG threshold for homodimers.
     use_fallback: bool = True
-) -> pd.DataFrame:
+) -> list[dict]:
     """
     Evaluates (if necessary) and filters primers based on quality metrics.
     - Tm must be within tm_range.
@@ -127,8 +133,8 @@ def Filter_Primers(
     """
     # Immediately return if the input DataFrame is empty.
     if primers.empty:
-        return pd.DataFrame()
-
+        return []
+    
     # --- Evaluation Step ---
     # Define the set of required metric columns.
     required_cols = {'tm', 'gc_content', 'hairpin_dg', 'homodimer_dg'}
@@ -188,7 +194,7 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         - Add validation for sequence length and SNP position.
         """
     all_primers = []
-    min_len -= 2 #don't know why but these need to have 2 and 1 removed from the inputs to get the desired lengths
+    min_len -= 2 #don't know why but 2 and 1 have to be removed from the inputs to get the desired lengths
     max_len -= 1
 
     for snp_dict in snps_list:
