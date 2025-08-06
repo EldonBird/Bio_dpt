@@ -34,6 +34,7 @@ class primer {
 		float homodimer;
 		int position;
         int length;
+		int best; 
 };
 
 std::vector<primer> df_to_listprimers(const py::object& df) {
@@ -198,10 +199,10 @@ std::vector<primer> filter_primers(std::vector<primer> evaluated_primers, int tm
 		primer current_primer = evaluated_primers[i];
 
 
-		if (current_primer.tm < tm_min) continue;
+		if (current_primer.tm <= tm_min) continue;
 		if (current_primer.tm > tm_max) continue;
-		if (current_primer.hairpin > hairpin_max) continue;
-		if (current_primer.homodimer > homodimer_max) continue;
+		if (current_primer.hairpin >= hairpin_max) continue;
+		if (current_primer.homodimer >= homodimer_max) continue;
 
 		result.push_back(current_primer);
 	}
@@ -215,7 +216,7 @@ std::vector<primer> rank_primers(std::vector<primer> data, float target_tm, floa
 
 		float tm_score = abs(data[i].tm - target_tm);
 		float gc_Score = abs(data[i].gc - target_gc);
-		data[i].score = tm_score + gc_Score + data[i].hairpin + data[i].homodimer;
+		data[i].score = tm_score + gc_Score + data[i].hairpin + data[i].homodimer + data[i].best; // maybe include length of sequences here in the score
 		
 	}
 
