@@ -192,17 +192,25 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, s
 	return result;
 }
 
-std::vector<primer> filter_primers(std::vector<primer> evaluated_primers, int tm_min, int tm_max, double hairpin_max, double homodimer_max) {
+std::vector<primer> filter_primers(std::vector<primer> primers, int tm_min, int tm_max, int gc_min, int gc_max, float hairpin_min, float homodimer_min) {
 	std::vector<primer> result;
 
-	for (std::size_t i = 0; i < evaluated_primers.size(); i++) {
-		primer current_primer = evaluated_primers[i];
+	if (primers.size() < 1) {
+		return result;
+	}
 
+	for (std::size_t i = 0; i < primers.size(); i++) {
+		primer current_primer = primers[i];
+
+		// I think that the filtering is done correctly, this might need to be altered, I am unaware if it should be inclusive, so I made the minimum inclusive but not the maximum.
+		// Also also, I haven't really done the 'safety' checks yet, I am hesitant until I understand why and where would be best to add them...
 
 		if (current_primer.tm <= tm_min) continue;
 		if (current_primer.tm > tm_max) continue;
-		if (current_primer.hairpin >= hairpin_max) continue;
-		if (current_primer.homodimer >= homodimer_max) continue;
+		if (current_primer.tm <= gc_min) continue;
+		if (current_primer.tm > gc_max) continue;
+		if (current_primer.hairpin <= hairpin_min) continue;
+		if (current_primer.homodimer <= homodimer_min) continue;
 
 		result.push_back(current_primer);
 	}
@@ -232,6 +240,7 @@ std::unordered_map<std::string, float> evaluate_primer(const std::string seq) {
 
 	std::unordered_map<std::string, float> result;
 
+	tm_result = py::primer3.bindings.calc_tm(primer)
 	
 	
 

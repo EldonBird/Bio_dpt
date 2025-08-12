@@ -1,1 +1,3 @@
-/usr/bin/c++ -g -Wl,--dependency-file=CMakeFiles/Bio_dpt.dir/link.d CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.o -o Bio_dpt
+C:\Users\Birdh\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -E rm -f CMakeFiles\Bio_dpt.dir/objects.a
+C:\Users\Birdh\AppData\Local\Programs\CLion\bin\mingw\bin\ar.exe qc CMakeFiles\Bio_dpt.dir/objects.a @CMakeFiles\Bio_dpt.dir\objects1.rsp
+C:\Users\Birdh\AppData\Local\Programs\CLion\bin\mingw\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\Bio_dpt.dir/objects.a -Wl,--no-whole-archive -o Bio_dpt.exe -Wl,--out-implib,libBio_dpt.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\Bio_dpt.dir\linkLibs.rsp

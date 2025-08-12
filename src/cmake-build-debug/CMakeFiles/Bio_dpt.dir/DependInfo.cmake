@@ -8,8 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/eldon/Documents/GitHub/Bio_dpt/src/pcr_lib.cpp" "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.o" "gcc" "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.o.d"
-  "" "Bio_dpt" "gcc" "CMakeFiles/Bio_dpt.dir/link.d"
+  "D:/Projects/My_Software/Bio_dpt/src/pcr_lib.cpp" "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.obj" "gcc" "CMakeFiles/Bio_dpt.dir/pcr_lib.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
