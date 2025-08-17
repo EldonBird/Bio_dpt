@@ -29,24 +29,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce87fcd0-412b-4419-8d75-1484064ee61e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Bio_dpt.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Bio_dpt.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/DependInfo.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/build.make" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/cmake_clean.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/cmake_clean.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/flags.make" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/flags.make" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Bio_dpt.dir/link.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/TargetDirectories.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/clion-environment.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/CMakeFiles/clion-environment.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmake-build-debug/cmake_install.cmake" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pcr_lib.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/pcr_lib.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -212,6 +195,7 @@
       <workItem from="1754451050647" duration="86000" />
       <workItem from="1754717571624" duration="686000" />
       <workItem from="1754782775525" duration="7644000" />
+      <workItem from="1755372369630" duration="17261000" />
     </task>
     <servers />
   </component>

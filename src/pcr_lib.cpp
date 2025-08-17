@@ -34,7 +34,18 @@ class primer {
 		float homodimer;
 		int position;
         int length;
-		int best; 
+		int best;
+
+
+	primer() {
+
+	}
+
+	~primer() {
+
+	}
+
+
 };
 
 std::vector<primer> df_to_listprimers(const py::object& df) {
@@ -62,12 +73,24 @@ std::vector<primer> df_to_listprimers(const py::object& df) {
 	return result;
 }
 
-py::object& df listprimers_to_df(vector<primer> data) {
+py::object& df listprimers_to_df(std::vector<primer> data) {
 
 
 
 
 	
+}
+
+float CalGC(std::string sequence) {
+
+	int count = 0;
+
+	for (int i = 0; i < sequence.size(); i++) {
+		if (sequence[i] == 'g' || sequence[i] == 'c') {
+			count++;
+		}
+	}
+	return float(sequence.size()) / float(count);
 }
 
 
@@ -123,28 +146,53 @@ std::string introduce_mismatch(std::string primer_sequence) {
 	
 }
 
-std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, std::size_t min_length, int max_length) {
+std::vector<primer> evaluate_primers(std::vector<primer> primers) {
+
+	std::vector<primer> result = primers;
+
+	for (int i = 0; i < primers.size(); i++) {
+
+
+		// using the module this way really needs to be double checked lol... I am unaware if this will work I just read an article...
+
+		float hairpin_result = py::module_::import("primer3.bindings").attr("calc_hairpin")(primers[i].sequence);
+		float tm_result = py::module_::import("primer3.bindings").attr("calc_tm")(primers[i].sequence);
+		float gc_result = CalGC(primers[i].sequence);
+		float homodimer = py::module_::import("primer3.bindings").attr("calc_homodimer")(primers[i].sequence);
+
+		result[i].tm = tm_result;
+		result[i].gc = gc_result;
+		result[i].homodimer = homodimer;
+		result[i].hairpin = hairpin_result;
+
+	}
+
+	return result;
+}
+
+std::vector<primer> generate_allele_specific_primers(std::vector<primer> primers, std::size_t min_length, std::size_t max_length) {
+
 	std::vector<primer> result;
 
-	for (std::size_t i = 0; i < data.size(); i++) {
+	for (std::size_t i = 0; i < primers.size(); i++) {
 
-		std::string snp_id = data[i].snp_id;
-		std::string allele = data[i].allele;
-		std::string sequence = data[i].sequence;
-		int center = data[i].position;
+		std::string snp_id = primers[i].snp_id;
+		std::string allele = primers[i].allele;
+		std::string sequence = primers[i].sequence;
+		int position = primers[i].position;
 
 		// took out the + 1 from center - max_length + 1 double check this
-		std::string forward = sequence.substr(center - max_length, center + 1);
+		std::string forward = sequence.substr(position - max_length, position + 1);
 		std::string forward_mismatch = introduce_mismatch(forward);
 
 		if (forward.length() >= min_length) {
 
-			for (std::size_t length = 0; length < max_length - min_length + 1; length++) {
+			for (std::size_t length = 0; length <= max_length - min_length; length++) {
 
 				std::string trimmed = forward_mismatch.substr(length);
 				primer p;
 
-				// might have a constructor later, please keep this in consideration
+				// might have a constructor later
 
 				p.snp_id = snp_id;
 				p.allele = allele;
@@ -152,7 +200,9 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, s
 				p.direction = "forward";
 				p.length = forward.length() - length;
 
-				result.push_back(p);
+				std::vector<primer> new_primer = evaluate_primers(std::vector<primer>{p});
+
+				result.push_back(new_primer[0]);
 			}
 		}
 		else {
@@ -162,7 +212,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> data, s
 
 
 		// I have no idea if this is what was intended, please have someone double check this ;)
-		std::string reverse = reverse_complement(sequence.substr(center, center + max_length + 1));
+		std::string reverse = reverse_complement(sequence.substr(position, position + max_length + 1));
 		std::string reverse_mismatch = introduce_mismatch(reverse);
 
 		if (reverse.length() >= min_length) {
@@ -236,17 +286,9 @@ std::vector<primer> rank_primers(std::vector<primer> data, float target_tm, floa
 	return data;
 }
 
-std::unordered_map<std::string, float> evaluate_primer(const std::string seq) {
-
-	std::unordered_map<std::string, float> result;
-
-	tm_result = py::primer3.bindings.calc_tm(primer)
-	
-	
 
 
-	return result;
-}
+
 
 
 
@@ -309,7 +351,16 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, double heterodimer_max){
 	std::vector<primer> result;
 
-	
+	std::vector<primer, primer> matching_primers;
+
+	for (std::size_t i = 0; i < data.size(); i++) {
+
+
+
+
+
+
+	}
 	
 	
 
