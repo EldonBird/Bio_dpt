@@ -35,17 +35,7 @@ class primer {
 		int position;
         int length;
 		int best;
-
-
-	primer() {
-
-	}
-
-	~primer() {
-
-	}
-
-
+	
 };
 
 std::vector<primer> df_to_listprimers(const py::object& df) {
@@ -73,24 +63,17 @@ std::vector<primer> df_to_listprimers(const py::object& df) {
 	return result;
 }
 
-py::object& df listprimers_to_df(std::vector<primer> data) {
-
-
-
-
-	
-}
 
 float CalGC(std::string sequence) {
 
 	int count = 0;
 
-	for (int i = 0; i < sequence.size(); i++) {
+	for (size_t i = 0; i < sequence.size(); i++) {
 		if (sequence[i] == 'g' || sequence[i] == 'c') {
 			count++;
 		}
 	}
-	return float(sequence.size()) / float(count);
+	return static_cast<float>(sequence.size()) / static_cast<float>(count);
 }
 
 
@@ -118,7 +101,7 @@ std::string reverse_complement(std::string s) {
 	return result;
 }
 
-std::string introduce_mismatch(std::string primer_sequence) {
+std::string introduce_mismatch(const std::string primer_sequence) {
 
 	std::unordered_map<char, char> complement = {
       
@@ -150,19 +133,25 @@ std::vector<primer> evaluate_primers(std::vector<primer> primers) {
 
 	std::vector<primer> result = primers;
 
-	for (int i = 0; i < primers.size(); i++) {
+	for (size_t i = 0; i < primers.size(); i++) {
 
 
 		// using the module this way really needs to be double checked lol... I am unaware if this will work I just read an article...
 
-		float hairpin_result = py::module_::import("primer3.bindings").attr("calc_hairpin")(primers[i].sequence);
-		float tm_result = py::module_::import("primer3.bindings").attr("calc_tm")(primers[i].sequence);
-		float gc_result = CalGC(primers[i].sequence);
-		float homodimer = py::module_::import("primer3.bindings").attr("calc_homodimer")(primers[i].sequence);
+		// float hairpin_result = py::module_::import("primer3.bindings").attr("calc_hairpin")(primers[i].sequence);
+		// float tm_result = py::module_::import("primer3.bindings").attr("calc_tm")(primers[i].sequence);
+		// float gc_result = CalGC(primers[i].sequence);
+		// float homodimer = py::module_::import("primer3.bindings").attr("calc_homodimer")(primers[i].sequence);
 
+		float tm_result = 45;
+		float gc_result = 45;
+		float homodimer_result = 45;
+		float hairpin_result = 45;
+
+		
 		result[i].tm = tm_result;
 		result[i].gc = gc_result;
-		result[i].homodimer = homodimer;
+		result[i].homodimer = homodimer_result;
 		result[i].hairpin = hairpin_result;
 
 	}
@@ -351,16 +340,7 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 std::vector<primer> check_multiplex_compatibility(std::vector<primer> data, double heterodimer_max){
 	std::vector<primer> result;
 
-	std::vector<primer, primer> matching_primers;
-
-	for (std::size_t i = 0; i < data.size(); i++) {
-
-
-
-
-
-
-	}
+	
 	
 	
 
@@ -380,7 +360,6 @@ PYBIND11_MODULE(pcr_lib, m) {
     m.def("generate_matching_primers", &generate_matching_primers, "Takes in 2 arrays of primers, and a min & max distance, and returns an array of matching primers.");
     m.def("check_multiplex_compatibility", &check_multiplex_compatibility, "Takes in a list of primers, and a heterodimer maximun, and returns an array of all possible primer combinations? REDO THIS ONE!!!!!!!!!!!!!!!");
     m.def("df_to_listprimers", &df_to_listprimers, "df to list of primers :)");
-    m.def("listprimers_to_df", &listprimers_to_df, "list of primers to pandas df ;)");
 
     py::class_<primer>(m, "primer")
         .def(py::init<>())
