@@ -18,3 +18,6 @@ project commands (mainly for Hunter)
 * python setup_win.py build_ext --inplace
 * python setup_lin.py build_ext --inplace
 * cmake --build . (please only build inside the src\build.)
+
+
+also check the top of the cpp_lib file to make sure the includes in the header are correct for the operating system
