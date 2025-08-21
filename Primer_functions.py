@@ -238,13 +238,11 @@ def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> 
     primers = []
     if seq_length >= min_len:
         for length in range(max_len-min_len):#possible bug if the forward mismatch is smaller than the minimum length
-            trimmed = seq[length:]
-            #take this part out of the loop, so we can have one dictionary that says the SNP ID and ALLELE and Direction, 
-            #and then a list in that dictionary of sequence and lengths. Storing the name over and over seems redundant IDK
+            
             primary_primer= {
                 "snpID": snp_id,
                 "allele": allele,
-                "primer_sequence": trimmed,
+                "primer_sequence": seq[length:], #this is the trimmed length
                 "direction": direction,
                 "length": seq_length-length
             }
