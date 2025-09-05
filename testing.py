@@ -1,6 +1,7 @@
 from Bio import Seq
 import numpy as np
-snp = 'ATGCAATTGGCCAAATTTGGGCCCAAAATTTTGGGGCCCCAAAAATTTTTGGGGGCCCCCAAAAAATTTTTTGGGGGGCCCCCC'
+import prc_lib as plib
+# snp = 'ATGCAATTGGCCAAATTTGGGCCCAAAATTTTGGGGCCCCAAAAATTTTTGGGGGCCCCCAAAAAATTTTTTGGGGGGCCCCCC'
 # max_len = 30
 # min_len = 18
 # for length in range(max_len-min_len-1):
@@ -22,7 +23,7 @@ snp_data = [{'snpID': 'rs1799971', 'allele': 'A', 'sequence': 'TCCTGGGTCAACTTGTC
 # print(f"Now a string again: {rev_string}")
 # reverse
 
-np_frame = np.array(snp_data)
+# np_frame = np.array(snp_data)
 
-for i in np_frame:
-    print(i['sequence'])
+# for i in np_frame:
+#     print(i['sequence'])
