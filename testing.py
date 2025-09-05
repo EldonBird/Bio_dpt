@@ -34,8 +34,4 @@ snp_data = [{'snpID': 'rs1799971', 'allele': 'A', 'sequence': 'TCCTGGGTCAACTTGTC
 
 # for i in np_frame:
 #     print(i['sequence'])
-# np_frame = np.array(snp_data)
-
-# for i in np_frame:
-#     print(i['sequence'])
 plib.generate_allele_specific_primers(snp_data, 24, 26)
