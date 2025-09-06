@@ -27,6 +27,7 @@ class primer {
 		std::string sequence;
 		std::string direction;
 
+
 		float score;
 		float gc;
 		float tm;
@@ -35,7 +36,54 @@ class primer {
 		int position;
         int length;
 		int best;
+
+
+	// defualt 'rule of thirds' (the lame one)
+	primer() {
+		
+	}
+
+
+	// when the direction should be 'imposed'
+	primer(std::string si, std::string a, std::string s, std::string d, int l) {
+
+		snp_id = si;
+		allele = a;
+		sequence = s;
+		direction = d;
+		length = l;
+		
+	}
+
+	// one of them does not have a length so I just removed it ...
+
+	primer(std::string si, std::string a, std::string s, std::string d) {
+
+		snp_id = si;
+		allele = a;
+		sequence = s;
+		direction = d;
+		
+	}
+
+	// created spesifiically for the df_to_listprimers function ;)
+	primer(std::string si, std::string a, std::string s, int p) {
+
+		snp_id = si;
+		allele = a;
+		sequence = s;
+		position = p;
+		
+	}
+
+
 	
+											// \/ I am so funny!!!
+	// the deconstrctor that is basically POINTLESS becuase we are letting pyhton do the memory managemnet itself...
+	~primer() {
+
+		
+	}
 };
 
 std::vector<primer> df_to_listprimers(const py::object& df) {
@@ -50,11 +98,7 @@ std::vector<primer> df_to_listprimers(const py::object& df) {
 
 	for (size_t i = 0; i < length; i++) {
 
-		primer p;
-		p.snp_id = ids[i].cast<std::string>();
-		p.allele = allele[i].cast<std::string>();
-		p.sequence = sequence[i].cast<std::string>();
-		p.position = positions[i].cast<int>();
+		primer p = new primer(ids[i].cast<std::string>(), allele[i].cast<std::string>(), sequence[i].cast<std::string>(), positions[i].cast<int>());
 		result.push_back(p);
 		
 	}
@@ -179,15 +223,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> primers
 			for (std::size_t length = 0; length <= max_length - min_length; length++) {
 
 				std::string trimmed = forward_mismatch.substr(length);
-				primer p;
-
-				// might have a constructor later
-
-				p.snp_id = snp_id;
-				p.allele = allele;
-				p.sequence = trimmed;
-				p.direction = "forward";
-				p.length = forward.length() - length;
+				primer p = primer(snp_id, allele, trimmed, "forward", forward.length() - length);
 
 				std::vector<primer> new_primer = evaluate_primers(std::vector<primer>{p});
 
@@ -210,13 +246,7 @@ std::vector<primer> generate_allele_specific_primers(std::vector<primer> primers
 
 				// double check that this is doing what I think that it is doing
 				std::string trimmed = reverse_mismatch.substr(length);
-				primer p;
-
-				p.snp_id = snp_id;
-				p.allele = allele;
-				p.sequence = trimmed;
-				p.direction = "reverse";
-				p.length = reverse.length() - length;
+				primer p = primer(snp_id, allele, trimmed, "reverse", reverse.length() - length);
 
 				result.push_back(p);
 			}
@@ -322,11 +352,7 @@ std::vector<primer> generate_matching_primers(std::vector<primer> snp_data, std:
 				// 	metrics["hairpin"] < 45.0 and
 				// 	metrics["homodimer"] < 45.0 ) {
 					
-					primer p;
-					p.snp_id = snp_id;
-					p.allele = allele;
-					p.sequence = sequence;
-					p.direction = direction;
+					primer p = primer(snp_id, allele, sequence, direction);
 					
 
 					
