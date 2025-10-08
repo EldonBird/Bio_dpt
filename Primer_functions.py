@@ -254,6 +254,22 @@ def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> 
         print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {seq_length}")
     return primers
 
+def test_Make_Primers():
+    test_seq = 'TCCTGGGTCAACTTGTCCCACTTAGATGGCAACCTGTCCGACCCATGCGGTCCGAACCGCA'
+    max_len = 30
+    min_len = 18
+    snp_id = 'rs1799971'
+    allele = "A"
+    
+    primers = Make_Primers(test_seq, min_len, max_len, snp_id, allele)
+    
+    assert isinstance(primers, list), "Output should be a list"
+    assert all(isinstance(primer, dict) for primer in primers), "All items in the list should be dictionaries"
+    assert all('primer_sequence' in primer for primer in primers), "Each dictionary should contain 'primer_sequence'"
+    assert all(min_len <= primer['length'] <= max_len for primer in primers), "Primer lengths should be within specified range"
+    
+    print("All tests passed!")
+
 
 
 def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
