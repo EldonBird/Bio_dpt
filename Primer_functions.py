@@ -25,14 +25,14 @@ def Introduce_Mismatch(primer_sequence: str) -> str:
     """
     # Ensure valid string input
     if not primer_sequence or not isinstance(primer_sequence, str):
-        print("Warning: Invalid primer input.")
+        print("Warning: Invalid primer input.") #Correction needed: Use logging instead of print for consistency.
         return primer_sequence
 
     primer_sequence = primer_sequence.upper().strip()
 
     # Must only contain A, C, G, T
     if not re.match("^[ACGT]+$", primer_sequence):
-        print(f"Warning: Invalid characters in primer: {primer_sequence}")
+        print(f"Warning: Invalid characters in primer: {primer_sequence}") #Correction needed: Use logging.
         return primer_sequence
 
     # Must be long enough to have a 3rd-to-last base
@@ -56,12 +56,12 @@ def Introduce_Mismatch(primer_sequence: str) -> str:
 
     # Replace the base with its mismatch
     return primer_sequence[:pos] + mismatch + primer_sequence[pos + 1:]
-def Calc_GC_Content(sequence: str):
+def Calc_GC_Content(sequence: str): #Could use BioPython's GC function for efficiency
     gc_total = 0
     for nucleotide in sequence:
         if nucleotide == 'G' or nucleotide == 'C':
             gc_total += 1
-    return gc_total/len(sequence)
+    return gc_total/len(sequence) #Correction needed: Handle empty sequence to avoid division by zero.
 
 def Evaluate_Primers(primer_dict: dict) -> Dict:
     """
@@ -91,8 +91,10 @@ def Evaluate_Primers(primer_dict: dict) -> Dict:
 
         primer_dict["tm"] = tm_result
         primer_dict["gc_content"] = gc_content
-        primer_dict["hairpin_dg"] = hairpin.tm if hasattr(hairpin, 'tm') else 0
+        primer_dict["hairpin_dg"] = hairpin.tm if hasattr(hairpin, 'tm') else 0 
+        # ^Correction needed: Use dg instead of tm for accuracy; primer3 hairpin returns structure with dg.
         primer_dict["homodimer_dg"] = homodimer.tm if hasattr(homodimer, 'tm') else 0
+        # ^Correction needed: Same as above, use dg.
         primer_dict["success"] = True
         return primer_dict
     except Exception as e:
@@ -106,15 +108,16 @@ def Evaluate_Primers(primer_dict: dict) -> Dict:
 
 def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism = 5) -> list[dict]:
     """
-        Rank primers based on Tm proximity to 62.5Â°C and GC content.
+        Rank primers based on Tm proximity to 62.5°C and GC content.
         TODO: Refine ranking criteria.
         - Consider weighting Tm vs. GC scores.
         - Add user-configurable ranking metrics.
-        """
+        """ # ^Correction Needed: add heterodimer to score.
     for primer in primers:
         primer["tm_score"] = abs(primer["tm"] - target_tm)
         primer["gc_score"] = abs(primer["gc_content"] - target_gc)
         primer["score"] = primer["tm_score"] + primer["hairpin_dg"] + primer["homodimer_dg"] + primer["gc_score"] 
+        # ^Correction needed: Add heterodimer_dg; use negative DG for penalties (less negative is better).
 
 
     primers.sort(key=lambda x: x["score"])
@@ -123,19 +126,20 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
     return primers[:optimism]
 
 def Filter_Primers(
+        #Correction Needed: Correction needed: Switch to list[dict] input/output as per comments; implement per-group filtering.
     # This is not filtering right. It's filtering the whole dataframe, and then if nothing passes, it's relaxing the requirements and trying again.
     # We need it to filter per list of dictionaries (per allele flanking direction). 
     # It should filter the primers close to the SNP and if none of them work then just take the best 5. 
     # Then the ones far away and if none of them work, scrap the whole allele flanking direction.
     # We also need it to use list of dictionaries rather than pandas dataframes. 
     # https://claude.ai/share/e73c5d8d-0209-485f-aff6-9db0f6066dd4 My claude conversation on the topic
-    primers: pd.DataFrame,
+    primers: pd.DataFrame, #Correction needed: Change to list[list[list[dict]]].
     tm_range: tuple[float, float] = (60.0, 65.0),
     gc_range: tuple[float, float] = (40.0, 60.0),
     hairpin_dg_min: float = -9.0, # ΔG threshold for hairpins (less negative is better).
     homodimer_dg_min: float = -9.0, # ΔG threshold for homodimers.
     use_fallback: bool = True
-) -> pd.DataFrame:
+) -> pd.DataFrame: #Correction needed: Change to list.
     """
     Evaluates (if necessary) and filters primers based on quality metrics.
     - Tm must be within tm_range.
@@ -152,7 +156,7 @@ def Filter_Primers(
     if not required_cols.issubset(primers.columns):
         print("Metrics not found, running evaluation...")
         # Calculate metrics for each primer sequence.
-        metrics_df = primers['primer_sequence'].apply(Evaluate_Primers).apply(pd.Series)
+        metrics_df = primers['primer_sequence'].apply(Evaluate_Primers).apply(pd.Series) #Correction needed: Add heterodimer calc.
         # Join the new metrics back to the original primer data.
         primers_with_metrics = primers.join(metrics_df)
     else:
@@ -165,7 +169,7 @@ def Filter_Primers(
         primers_with_metrics['tm'].between(*tm_range) &
         primers_with_metrics['gc_content'].between(*gc_range) &
         (primers_with_metrics['hairpin_dg'] > hairpin_dg_min) &
-        (primers_with_metrics['homodimer_dg'] > homodimer_dg_min)
+        (primers_with_metrics['homodimer_dg'] > homodimer_dg_min) #Correction needed: Add heterodimer check.
     )
     # Apply the mask to get the subset of primers that passed.
     strict_results = primers_with_metrics[strict_filter]
@@ -177,7 +181,7 @@ def Filter_Primers(
     # --- Fallback Logic ---
     # If no primers passed strict and fallback is enabled, try again with relaxed criteria.
     if use_fallback:
-        print("WARNING: No primers passed strict filtering. Applying relaxed criteria.")
+        print("WARNING: No primers passed strict filtering. Applying relaxed criteria.") #Correction needed: Use logging; make per-group.
         # Create a new boolean mask with wider, more tolerant thresholds.
         relaxed_filter = (
             primers_with_metrics['tm'].between(tm_range[0] - 2.0, tm_range[1] + 2.0) &
@@ -208,10 +212,12 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         TODO: Optimize for large SNP sets.
         - Use parallel processing (e.g., multiprocessing) for many SNPs.
         - Add validation for sequence length and SNP position.
+        - Add restriction sites
         """
     all_primers = []
     min_len -= 2 #don't know why but 2 and 1 have to be removed from the inputs to get the desired lengths
-    max_len -= 1
+    # ^ Correction needed: Remove arbitrary adjustment; explain or fix bug.
+    max_len -= 1 #Correction needed: Same as above.
 
     for snp_dict in snps_list:
         this_allele_primers = []#a list of dictionaries
@@ -221,6 +227,7 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         snp_pos = snp_dict["position"]
 
         forward = sequence[snp_pos - max_len :snp_pos+1]#this gets the largest segment.   
+        #^ Correction needed: Add length validation.
         forward_mismatch = Introduce_Mismatch(forward)
     
         reverse = str(Seq(sequence[snp_pos:snp_pos+max_len+1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
@@ -238,28 +245,34 @@ def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> 
     primers = []
     if seq_length >= min_len:
         for length in range(max_len-min_len):#possible bug if the forward mismatch is smaller than the minimum length
-            trimmed = seq[length:]
+            #Incorrect: Bug if seq < min_len after mismatch; incorrect range (excludes max_len). Correction: Use range(min_len, max_len+1); validate seq length post-mismatch.
+            trimmed = seq[length:] #Incorrect: No reverse-specific trimming logic. Correction: Trim differently for reverse like seq[:length]).
             #take this part out of the loop, so we can have one dictionary that says the SNP ID and ALLELE and Direction, 
             #and then a list in that dictionary of sequence and lengths. Storing the name over and over seems redundant IDK
+            #Correction needed: For reverse, trim differently if needed.
+            
             primary_primer= {
                 "snpID": snp_id,
                 "allele": allele,
                 "primer_sequence": trimmed,
                 "direction": direction,
-                "length": seq_length-length
-            }
+                "length": seq_length-length 
+            } #Incorrect: Redundant fields; missing annealing positions, restriction sites. Correction: Add annealing_start/end, restriction_site keys.
             primers.append(Evaluate_Primers(primary_primer))#Evaluate primers was built to handle one dictionary at a time. Adding it here saves time by avoiding an extra loop. 
             #maybe avoid calling the function all together by passing Evaluate_Primers directly into make_primers
     else:
-        print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {seq_length}")
+        print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {seq_length}") #Correction needed: Use logging; generalize for reverse.
     return primers
 
 
 
-def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
+def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame:: 
+    # Incorrect: Completely stubbed out; DataFrame-based inputs mismatch list outputs; no pair compatibility checks. Correction: Implement logic using primer3-py designPrimers, list inputs, Tm difference <5°C, heterodimer ΔG >-7 kcal/mol.
     """
         Generate matching primers for top 5 allele-specific primers.
         TODO: Optimize primer pairing.
         - Use primer3-py's designPrimers for more efficient pairing.
-        - Add checks for primer pair compatibility (e.g., Tm difference < 5Â°C).
+        - Add checks for primer pair compatibility (e.g., Tm difference < 5°C).
         """
+    # Correction: implement logic to generate 5 pairs per top allele-specific primer, checking Tm and heterodimer.
+# Correction: Add logic to extract sequences 100–500 bp away (upstream for reverse, downstream for forward), use primer3-py to design primers, and return list of pairs with metadata (Tm, GC, ΔG, annealing positions).
