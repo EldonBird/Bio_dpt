@@ -19,7 +19,7 @@ import primer3
 # This function was unnecessary
 
 
-def Introduce_Mismatch(primer_sequence: str) -> str:
+def introduce_mismatch(primer_sequence: str) -> str:
     """
     Introduces a base mismatch at the antepenultimate position (3rd from last).
     """
@@ -56,14 +56,14 @@ def Introduce_Mismatch(primer_sequence: str) -> str:
 
     # Replace the base with its mismatch
     return primer_sequence[:pos] + mismatch + primer_sequence[pos + 1:]
-def Calc_GC_Content(sequence: str):
+def calc_gc_content(sequence: str):
     gc_total = 0
     for nucleotide in sequence:
         if nucleotide == 'G' or nucleotide == 'C':
             gc_total += 1
     return gc_total/len(sequence)
 
-def Evaluate_Primers(primer_dict: dict) -> Dict:
+def evaluate_primers(primer_dict: dict) -> Dict:
     """
         Evaluate primer quality using primer3-py.
         TODO: Enhance error handling.
@@ -85,7 +85,7 @@ def Evaluate_Primers(primer_dict: dict) -> Dict:
 
         # Use primer3's analysis functions instead of design_primers
         tm_result = primer3.bindings.calc_tm(primer_dict['primer_sequence'])
-        gc_content = Calc_GC_Content(primer_dict['primer_sequence'])
+        gc_content = calc_gc_content(primer_dict['primer_sequence'])
         hairpin = primer3.bindings.calc_hairpin(primer_dict['primer_sequence'])
         homodimer = primer3.bindings.calc_homodimer(primer_dict['primer_sequence'])
 
@@ -122,7 +122,7 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
     
     return primers[:optimism]
 
-def Filter_Primers(
+def filter_primers(
     # This is not filtering right. It's filtering the whole dataframe, and then if nothing passes, it's relaxing the requirements and trying again.
     # We need it to filter per list of dictionaries (per allele flanking direction). 
     # It should filter the primers close to the SNP and if none of them work then just take the best 5. 
@@ -152,7 +152,7 @@ def Filter_Primers(
     if not required_cols.issubset(primers.columns):
         print("Metrics not found, running evaluation...")
         # Calculate metrics for each primer sequence.
-        metrics_df = primers['primer_sequence'].apply(Evaluate_Primers).apply(pd.Series)
+        metrics_df = primers['primer_sequence'].apply(evaluate_primers).apply(pd.Series)
         # Join the new metrics back to the original primer data.
         primers_with_metrics = primers.join(metrics_df)
     else:
@@ -197,7 +197,7 @@ def Filter_Primers(
     return pd.DataFrame()
 
 
-def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, max_len: int = 28) -> list[list[list[dict]]]:
+def generate_allele_specific_primers(snps_list: list[dict], min_len: int = 18, max_len: int = 28) -> list[list[list[dict]]]:
     # make primers makes a dictionary for every length of one direction of an SNP.
     # those dictionaries are stored in a list, so a list for forward and a list for backward
     # those lists are stored in another list, one for each SNP. 
@@ -221,42 +221,40 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
         snp_pos = snp_dict["position"]
 
         forward = sequence[snp_pos - max_len :snp_pos+1]#this gets the largest segment.   
-        forward_mismatch = Introduce_Mismatch(forward)
+        forward_mismatch = introduce_mismatch(forward)
     
         reverse = str(Seq(sequence[snp_pos:snp_pos+max_len+1]).reverse_complement()) #creates a Biopython sequence, gets the reverse complement, and converts is back to a string
-        reverse_mismatch = Introduce_Mismatch(reverse)
+        reverse_mismatch = introduce_mismatch(reverse)
 
-        this_allele_primers.append(Make_Primers(forward_mismatch, min_len, max_len, snp_id, allele))
-        this_allele_primers.append(Make_Primers(reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
+        this_allele_primers.append(make_primers(forward_mismatch, min_len, max_len, snp_id, allele))
+        this_allele_primers.append(make_primers(reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
  
         all_primers.append(this_allele_primers)
     return all_primers
    
 
-def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> list[dict]: 
+def make_primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> list[dict]: 
     seq_length = len(seq)
     primers = []
     if seq_length >= min_len:
         for length in range(max_len-min_len):#possible bug if the forward mismatch is smaller than the minimum length
-            trimmed = seq[length:]
-            #take this part out of the loop, so we can have one dictionary that says the SNP ID and ALLELE and Direction, 
-            #and then a list in that dictionary of sequence and lengths. Storing the name over and over seems redundant IDK
+            
             primary_primer= {
                 "snpID": snp_id,
                 "allele": allele,
-                "primer_sequence": trimmed,
+                "primer_sequence": seq[length:], #this is the trimmed length
                 "direction": direction,
-                "length": seq_length-length
+                "length": seq_length-length 
             }
-            primers.append(Evaluate_Primers(primary_primer))#Evaluate primers was built to handle one dictionary at a time. Adding it here saves time by avoiding an extra loop. 
-            #maybe avoid calling the function all together by passing Evaluate_Primers directly into make_primers
+            primers.append(evaluate_primers(primary_primer))#Evaluate primers was built to handle one dictionary at a time. Adding it here saves time by avoiding an extra loop. 
+            #maybe avoid calling the function all together by passing evaluate_primers directly into make_primers
     else:
         print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {seq_length}")
     return primers
 
 
 
-def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
+def generate_matching_primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
     """
         Generate matching primers for top 5 allele-specific primers.
         TODO: Optimize primer pairing.
