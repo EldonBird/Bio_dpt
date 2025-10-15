@@ -10,8 +10,13 @@ import prc_lib as plib
 #     print(length)
 
 
-snp_data = [{'snpID': 'rs1799971', 'allele': 'A', 'sequence': 'TCCTGGGTCAACTTGTCCCACTTAGATGGCAACCTGTCCGACCCATGCGGTCCGAACCGCA', 'position': 30}, {'snpID': 'rs1799971', 'allele': 'G', 'sequence': 'TCCTGGGTCAACTTGTCCCACTTAGATGGCGACCTGTCCGACCCATGCGGTCCGAACCGCA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'G', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCGACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'A', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCAACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'C', 'sequence': 
-'AAAAAAAGAGAAAGAAATAGGAGCAGGATCCACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, {'snpID': 'rs599839', 'allele': 'T', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCTACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}]
+snp_data = [{'snpID': 'rs1799971', 'allele': 'A', 'sequence': 'TCCTGGGTCAACTTGTCCCACTTAGATGGCAACCTGTCCGACCCATGCGGTCCGAACCGCA', 'position': 30}, 
+            {'snpID': 'rs1799971', 'allele': 'G', 'sequence': 'TCCTGGGTCAACTTGTCCCACTTAGATGGCGACCTGTCCGACCCATGCGGTCCGAACCGCA', 'position': 30}, 
+            
+            {'snpID': 'rs599839', 'allele': 'G', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCGACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, 
+            {'snpID': 'rs599839', 'allele': 'A', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCAACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, 
+            {'snpID': 'rs599839', 'allele': 'C', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCCACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}, 
+            {'snpID': 'rs599839', 'allele': 'T', 'sequence': 'AAAAAAAGAGAAAGAAATAGGAGCAGGATCTACTTCCAGATATACAGAGAATATAAAAATA', 'position': 30}]
 
 # snp_short = snp[0:10]
 # print(f"Normal string: {snp_short}")
