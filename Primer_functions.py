@@ -7,7 +7,7 @@ import primer3
 
 # the order is 
 # generate allele specific (and evaluate)
-# generate matching (and evaluate)
+# generate matching (and evaluate) this should change for optimization.
 # filter
 # rank
 
@@ -39,12 +39,17 @@ def Introduce_Mismatch(primer_sequence: str) -> str:
     if len(primer_sequence) < 3:
         print(f"Warning: Primer too short for mismatch: {primer_sequence}")
         return primer_sequence
+    
+
 
     # Simple mismatch rules (purine↔purine, pyrimidine↔pyrimidine)
     mismatch_rules = {
         "A": "G", "G": "A",
         "C": "T", "T": "C"
     }
+    # Isaiah's note: this is from the work sheet Camila dropped in the slack and explaines why we might have weird primer rules
+    # "...Along these same lines, it is not a bad idea to place a G or C at the 3’ end where possible, 
+    # but try to avoid stretches of three or more bases. This can lead to nonspecific binding and polymerase initiation."
 
     pos = len(primer_sequence) - 3  # Antepenultimate index
     base = primer_sequence[pos]
@@ -118,7 +123,9 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
         primer["gc_score"] = abs(primer["gc_content"] - target_gc)
         primer["score"] = primer["tm_score"] + primer["hairpin_dg"] + primer["homodimer_dg"] + primer["gc_score"] 
         # ^Correction needed: Add heterodimer_dg; use negative DG for penalties (less negative is better).
-
+        # Isaiah note: from the work sheet 
+        # "Look for significant homodimer, heterodimer, and hairpin loop formation. 
+        # “Significant” means more than 7 base pair interactions, or a ΔG that is more negative than -7 kcal mol-1."
 
     primers.sort(key=lambda x: x["score"])
 
