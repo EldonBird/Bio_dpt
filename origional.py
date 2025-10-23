@@ -3,7 +3,7 @@ import primer3
 from Bio import Entrez, Seq
 import requests
 import json
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Callable
 
 # Set your email for NCBI Entrez
 Entrez.email = "your.email@example.com"  # Replace with your actual email
@@ -128,33 +128,176 @@ def evaluate_primer(primer_seq: str) -> Dict:
     except Exception:
         return {"tm": 0, "gc_content": 0, "hairpin": 999, "homodimer": 999}
 
-def filter_primers(primers: pd.DataFrame, tm_min: float = 60.0, tm_max: float = 65.0, hairpin_max: float = 45.0, homodimer_max: float = 45.0) -> pd.DataFrame:
+def metrics_for_list(primer_list: List[str], evaluate: Callable[[str], Dict[str, float]]) -> pd.DataFrame:
     """
-    Filter primers based on quality metrics.
-    TODO: Add fallback for strict filtering.
-    - If no primers pass, consider relaxing criteria or selecting best available.
+    Buidl metrics table for a list of primers.
+    The columns are primer, tm, gc, hairprin, homodimer
+    In R, we were doing 
+            sapply(list_of_primers, calculate_tm)
+            sapply(list_of_primers, calculate_hairpin)
+            sapply(list_of_primers, calculate_homodimer)
+    then we indexed those results to apply the thresholds per list.
+    the calculate.... is used in the evaluate_primer function.           
     """
-    quality_metrics = []
-    for _, row in primers.iterrows():
-        metrics = evaluate_primer(row["primer_sequence"])
-        quality_metrics.append({
-            "snpID": row["snpID"],
-            "allele": row["allele"],
-            "primer_sequence": row["primer_sequence"],
-            "direction": row["direction"],
-            "length": row["length"],
-            "tm": metrics["tm"],
-            "gc_content": metrics["gc_content"],
-            "hairpin": metrics["hairpin"],
-            "homodimer": metrics["homodimer"]
+
+    if not primer_list:
+        return pd.DataFrame(columns=["primer", "tm", "gc", "hairpin", "homodimer"])
+    
+    rows = []
+
+    for p in primer_list:
+        m = evaluate(p)
+        rows.append({
+            "primer": p,
+            "tm": float(m["tm"]),
+            "gc": float(m.get("gc_content", m.get("gc", float("nan")))),
+            "hairpin": float(m["hairpin"]),
+            "homodimer": float(m["homodimer"]),
         })
-    df = pd.DataFrame(quality_metrics)
-    return df[
-        (df["tm"].between(tm_min, tm_max)) &
-        (df["gc_content"].between(40, 60)) &
-        (df["hairpin"] < hairpin_max) &
-        (df["homodimer"] < homodimer_max)
-        ]
+    return pd.DataFrame(rows)
+
+def _soft_keep(df: pd.DataFrame, predicate: pd.Series, keep_at_least: int,
+               closeness_key: pd.Series) -> pd.DataFrame:
+    """
+    If suficient rows pass the predicate, then only keep those
+    Else keep the best keep_at_least rows by closest to the threshold
+
+    R code to check.
+    k = candidates[ sapply(candidates, calculate_homodimer)[2,] < Homodimer ]
+    if (length(k) > 5) keep k
+    else keep the ~5 closest to Homodimer
+    """
+    passed = df[predicate]
+
+    if len(passed) >= keep_at_least:
+        return passed
+    if df.empty:
+        return df
+    
+    k = min(keep_at_least, len(df))
+
+    return (df.assign(_close=closeness_key.abs())
+              .sort_values("_close")
+              .head(k)
+              .drop(columns="_close"))
+
+def filter_one_list_soft(primer_list: List[str],
+                         evaluate: Callable[[str], Dict[str, float]],
+                         desired_tm: float = 64.0,
+                         diff: float = 3.0,
+                         homodimer_max: float = 45.0,
+                         hairpin_max: float = 45.0,
+                         keep_at_least: int = 5) -> List[str]:
+    
+    """
+    Soft filter a single candidate list such as the stage1_filter behavior
+    Order is homodimer, hairpin, tm > lower, tm < upper
+    
+    Applies the 4 checks and then returns filtered list of primer string
+    for that one candidate list
+
+    The checks are homodimer, hairpin, tm, 
+
+    Used in the R stage1_filter:
+        homodimer < homodimer_max
+        hairpin   < hairpin_max
+        Tm        < desired_tm + diff      # "above upper" trim
+        Tm        > desired_tm - diff      # "below lower" trim
+    """
+
+    if not primer_list:
+        return []
+
+    df = metrics_for_list(primer_list, evaluate)
+
+    # homodimer < max
+    df = _soft_keep(df, df["homodimer"] < homodimer_max, keep_at_least, df["homodimer"] - homodimer_max)
+    if df.empty: return []
+
+    # hairpin < max
+    df = _soft_keep(df, df["hairpin"] < hairpin_max, keep_at_least, df["hairpin"] - hairpin_max)
+    if df.empty: return []
+
+    # Tm within [desired_tm - diff, desired_tm + diff]
+    # Two-step Tm window in R(first trim above upper, then below lower or vice versa)
+    lower, upper = desired_tm - diff, desired_tm + diff
+    df = _soft_keep(df, df["tm"] > lower, keep_at_least, df["tm"] - lower)
+    if df.empty: return []
+    df = _soft_keep(df, df["tm"] < upper, keep_at_least, df["tm"] - upper)
+    if df.empty: return []
+
+    return df["primer"].tolist()
+
+
+def filter_primers(primers: pd.DataFrame,
+                   desired_tm: float = 64.0,
+                   diff: float = 3.0,
+                   hairpin_max: float = 45.0,
+                   homodimer_max: float = 45.0,
+                   keep_at_least: int = 5) -> pd.DataFrame:
+    """
+    Filter applied per snpID, allele, direction.
+    Keeps at least a few best available primers per group, 
+    unless a group had none to start with.
+    reurns a flat datafram with metrics so the downstream remain unchanged
+
+    We are filtering per each SNP group and keeps some best available 
+    Group candidates and collects sequences into lists.
+    (In R, each row already carried lists. 
+    We have candidates as rows, so we group to recreate per-group lists.)
+
+    """
+    if primers.empty:
+        return primers
+
+    # Group candidates per SNP/allele/direction
+    grouped = (primers.groupby(["snpID", "allele", "direction"])
+                      .agg({"primer_sequence": list})
+                      .reset_index())
+
+    # Apply soft filter to each group's list
+    # Like stage1_filter() on each list in R, 
+    # same staged thresholds and bottlenecks fallbacks
+    def _apply(row):
+        kept = filter_one_list_soft(
+            row["primer_sequence"],
+            evaluate=evaluate_primer,
+            desired_tm=desired_tm,
+            diff=diff,
+            homodimer_max=homodimer_max,
+            hairpin_max=hairpin_max,
+            keep_at_least=keep_at_least
+        )
+        return kept
+
+    grouped["kept_sequences"] = grouped.apply(_apply, axis=1)
+    grouped = grouped[grouped["kept_sequences"].map(len) > 0]
+    
+    # drop rows that ended empty, like farway empty
+    if grouped.empty:
+        return pd.DataFrame(columns=list(primers.columns) + ["tm","gc_content","hairpin","homodimer"])
+
+    # Explode back to rows and attach metrics (so rank_primers() still works)
+    # raank_primers will still receive a flat table with one primer per row 
+    # with tm, gc_content, hairpin, and homodimer
+    # the get_filter added substrings_count, maybe if we distinguish near/far
+    # implement it? If not keep it simple.
+    rows = []
+    for _, r in grouped.iterrows():
+        for seq in r["kept_sequences"]:
+            m = evaluate_primer(seq)
+            rows.append({
+                "snpID": r["snpID"],
+                "allele": r["allele"],
+                "direction": r["direction"],
+                "primer_sequence": seq,
+                "length": len(seq),
+                "tm": m["tm"],
+                "gc_content": m["gc_content"],
+                "hairpin": m["hairpin"],
+                "homodimer": m["homodimer"],
+            })
+    return pd.DataFrame(rows)
 
 def rank_primers(primers: pd.DataFrame) -> pd.DataFrame:
     """
