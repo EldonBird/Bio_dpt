@@ -120,11 +120,11 @@ def Main():
 
 
     primers = generate_allele_specific_primers(snp_df, 24, 26)
-    # print(primers)
-    print(f"number of snps {len(primers)}")
-    print(f"number of directions {len(primers[0])}")
-    print(f"number of primers in a direction {len(primers[0][0])}")
-    print(len(snp_df))
+    print(primers)
+    # print(f"number of snps {len(primers)}")
+    # print(f"number of directions {len(primers[0])}")
+    # print(f"number of primers in a direction {len(primers[0][0])}")
+    # print(len(snp_df))
     # for snp in primers:
 
 
@@ -155,3 +155,17 @@ if(__name__ == "__main__"):
 #   [{'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'TTCGGACCGCATGGGTCGGACAGATT', 'direction': 'reverse', 'length': 26, 'tm': 69.86363516091336, 'gc_content': 0.5769230769230769, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 27.76279186528285, 'success': True}, 
 #    {'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'TCGGACCGCATGGGTCGGACAGATT', 'direction': 'reverse', 'length': 25, 'tm': 69.765715142391, 'gc_content': 0.6, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 25.839909279650783, 'success': True}, 
 #    {'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'CGGACCGCATGGGTCGGACAGATT', 'direction': 'reverse', 'length': 24, 'tm': 68.83426028792064, 'gc_content': 0.625, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 24.30006522953198, 'success': True}]]]
+
+
+[[{'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'GGTCAACTTGTCCCACTTAGATGACA', 'direction': 'forward', 'length': 26, 'tm': 62.64091186246884, 'gc_content': 0.46153846153846156, 'hairpin_dg': 40.246484286148586, 'homodimer_dg': 11.618441795495414, 'success': True}, 
+  {'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'GTCAACTTGTCCCACTTAGATGACA', 'direction': 'forward', 'length': 25, 'tm': 60.741963776567445, 'gc_content': 0.44, 'hairpin_dg': 39.085883205265475, 'homodimer_dg': -11.318504829494259, 'success': True}, 
+  {'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'TCAACTTGTCCCACTTAGATGACA', 'direction': 'forward', 'length': 24, 'tm': 59.65329123118744, 'gc_content': 0.4166666666666667, 'hairpin_dg': 36.03872822148651, 'homodimer_dg': -32.43413848254389, 'success': True}, 
+  {'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'TTCGGACCGCATGGGTCGGACAGATT', 'direction': 'reverse', 'length': 26, 'tm': 69.86363516091336, 'gc_content': 0.5769230769230769, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 27.76279186528285, 'success': True}, 
+  {'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'TCGGACCGCATGGGTCGGACAGATT', 'direction': 'reverse', 'length': 25, 'tm': 69.765715142391, 'gc_content': 0.6, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 25.839909279650783, 'success': True}, 
+  {'snpID': 'rs1799971', 'allele': 'A', 'primer_sequence': 'CGGACCGCATGGGTCGGACAGATT', 'direction': 'reverse', 'length': 24, 'tm': 68.83426028792064, 'gc_content': 0.625, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 24.30006522953198, 'success': True}], 
+[{'snpID': 'rs1799971', 'allele': 'G', 'primer_sequence': 'GGTCAACTTGTCCCACTTAGATGACG', 'direction': 'forward', 'length': 26, 'tm': 63.41694547346191, 'gc_content': 0.5, 'hairpin_dg': 39.73007908831477, 'homodimer_dg': -11.661466527887058, 'success': True}, 
+ {'snpID': 'rs1799971', 'allele': 'G', 'primer_sequence': 'GTCAACTTGTCCCACTTAGATGACG', 'direction': 'forward', 'length': 25, 'tm': 61.58199577952456, 'gc_content': 0.48, 'hairpin_dg': 33.026282568142335, 'homodimer_dg': -22.267119198164437, 'success': True}, 
+ {'snpID': 'rs1799971', 'allele': 'G', 'primer_sequence': 'TCAACTTGTCCCACTTAGATGACG', 'direction': 'forward', 'length': 24, 'tm': 60.560716263151505, 'gc_content': 0.4583333333333333, 'hairpin_dg': 0.0, 'homodimer_dg': -30.140570030495894, 'success': True}, 
+ {'snpID': 'rs1799971', 'allele': 'G', 'primer_sequence': 'TTCGGACCGCATGGGTCGGACAGATC', 'direction': 'reverse', 'length': 26, 'tm': 70.08218467351901, 'gc_content': 0.6153846153846154, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 27.76279186528285, 'success': True}, 
+ {'snpID': 'rs1799971', 'allele': 'G', 'primer_sequence': 'TCGGACCGCATGGGTCGGACAGATC', 'direction': 'reverse', 'length': 25, 'tm': 69.99393494968808, 'gc_content': 0.64, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 25.839909279650783, 'success': True}, 
+{'snpID': 'rs1799971', 'allele': 'G', 'primer_sequence': 'CGGACCGCATGGGTCGGACAGATC', 'direction': 'reverse', 'length': 24, 'tm': 69.08012732025867, 'gc_content': 0.6666666666666666, 'hairpin_dg': 61.78877378212809, 'homodimer_dg': 24.30006522953198, 'success': True}]]
