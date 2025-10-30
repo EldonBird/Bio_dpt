@@ -112,7 +112,7 @@ def Main():
         """
     
     # real fetch snp
-    # snp_df = Fetch_SNP_Data(["rs1799971"], 30)# just here for testing.  , "rs599839"
+    # snp_df = Fetch_SNP_Data(["rs1799971"], 1200)# just here for testing.  , "rs599839"
   
 
     # sudo data to speed up testing

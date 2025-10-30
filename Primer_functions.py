@@ -188,6 +188,7 @@ def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, m
 
         this_allele_primers.append(Make_Primers(forward_mismatch, min_len, max_len, snp_id, allele))
         this_allele_primers.append(Make_Primers(reverse_mismatch, min_len, max_len, snp_id, allele, "reverse"))
+        # this_allele_primers.append("hi")
  
         all_primers.append(this_allele_primers)
     return all_primers
@@ -207,8 +208,6 @@ def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> 
                 "primer_sequence": trimmed,
                 "direction": direction,
                 "length": seq_length-length,
-         # Use primer3's analysis functions instead of design_primers
-                
                 "tm" : primer3.bindings.calc_tm(trimmed),
                 "gc_content" : Calc_GC_Content(trimmed),
                 "hairpin_dg" : primer3.bindings.calc_hairpin(trimmed),
