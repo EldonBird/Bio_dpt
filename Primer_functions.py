@@ -1,4 +1,4 @@
-import pandas as pd
+
 import re 
 from Bio.Seq import Seq
 import logging
@@ -63,46 +63,6 @@ def Calc_GC_Content(sequence: str):
             gc_total += 1
     return gc_total/len(sequence)
 
-def Evaluate_Primers(primer_dict: dict) -> Dict:
-    """
-        Evaluate primer quality using primer3-py.
-        TODO: Enhance error handling.
-        - Handle primer3-py failures gracefully.
-        - Add logging for failed evaluations.
-        """
-
-    # Setup logging
-    logging.basicConfig(
-        # print('in set up logic')
-        filename="primer_evaluation.log",
-        level=logging.INFO,
-        # print('logging info')
-        format="%(asctime)s - %(levelname)s - %(message)s"
-    )
-
-
-    try:
-
-        # Use primer3's analysis functions instead of design_primers
-        tm_result = primer3.bindings.calc_tm(primer_dict['primer_sequence'])
-        gc_content = Calc_GC_Content(primer_dict['primer_sequence'])
-        hairpin = primer3.bindings.calc_hairpin(primer_dict['primer_sequence'])
-        homodimer = primer3.bindings.calc_homodimer(primer_dict['primer_sequence'])
-
-        primer_dict["tm"] = tm_result
-        primer_dict["gc_content"] = gc_content
-        primer_dict["hairpin_dg"] = hairpin.tm if hasattr(hairpin, 'tm') else 0
-        primer_dict["homodimer_dg"] = homodimer.tm if hasattr(homodimer, 'tm') else 0
-        primer_dict["success"] = True
-        return primer_dict
-    except Exception as e:
-        logging.error(f"Primer evaluation failed for sequence: {primer_dict['primer_sequence']}\nError: {str(e)}")
-        primer_dict["tm"] = 0
-        primer_dict["gc_content"] = 0
-        primer_dict["hairpin_dg"] = 999
-        primer_dict["homodimer_dg"] = 999
-        primer_dict["success"] = False
-        return primer_dict
 
 def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism = 5) -> list[dict]:
     """
@@ -122,79 +82,79 @@ def rank_primers(primers: list[dict], target_tm = 62.5, target_gc = 50, optimism
     
     return primers[:optimism]
 
-def Filter_Primers(
-    # This is not filtering right. It's filtering the whole dataframe, and then if nothing passes, it's relaxing the requirements and trying again.
-    # We need it to filter per list of dictionaries (per allele flanking direction). 
-    # It should filter the primers close to the SNP and if none of them work then just take the best 5. 
-    # Then the ones far away and if none of them work, scrap the whole allele flanking direction.
-    # We also need it to use list of dictionaries rather than pandas dataframes. 
-    # https://claude.ai/share/e73c5d8d-0209-485f-aff6-9db0f6066dd4 My claude conversation on the topic
-    primers: pd.DataFrame,
-    tm_range: tuple[float, float] = (60.0, 65.0),
-    gc_range: tuple[float, float] = (40.0, 60.0),
-    hairpin_dg_min: float = -9.0, # ΔG threshold for hairpins (less negative is better).
-    homodimer_dg_min: float = -9.0, # ΔG threshold for homodimers.
-    use_fallback: bool = True
-) -> pd.DataFrame:
-    """
-    Evaluates (if necessary) and filters primers based on quality metrics.
-    - Tm must be within tm_range.
-    - GC% must be within gc_range.
-    - Hairpin and homodimer ΔG must be weaker than the threshold (less negative, i.e., > min).
-    """
-    # Immediately return if the input DataFrame is empty.
-    if primers.empty:
-        return pd.DataFrame()
+# def Filter_Primers(
+#     # This is not filtering right. It's filtering the whole dataframe, and then if nothing passes, it's relaxing the requirements and trying again.
+#     # We need it to filter per list of dictionaries (per allele flanking direction). 
+#     # It should filter the primers close to the SNP and if none of them work then just take the best 5. 
+#     # Then the ones far away and if none of them work, scrap the whole allele flanking direction.
+#     # We also need it to use list of dictionaries rather than pandas dataframes. 
+#     # https://claude.ai/share/e73c5d8d-0209-485f-aff6-9db0f6066dd4 My claude conversation on the topic
+#     primers: pd.DataFrame,
+#     tm_range: tuple[float, float] = (60.0, 65.0),
+#     gc_range: tuple[float, float] = (40.0, 60.0),
+#     hairpin_dg_min: float = -9.0, # ΔG threshold for hairpins (less negative is better).
+#     homodimer_dg_min: float = -9.0, # ΔG threshold for homodimers.
+#     use_fallback: bool = True
+# ) -> pd.DataFrame:
+#     """
+#     Evaluates (if necessary) and filters primers based on quality metrics.
+#     - Tm must be within tm_range.
+#     - GC% must be within gc_range.
+#     - Hairpin and homodimer ΔG must be weaker than the threshold (less negative, i.e., > min).
+#     """
+#     # Immediately return if the input DataFrame is empty.
+#     if primers.empty:
+#         return pd.DataFrame()
     
-    # --- Evaluation Step ---
-    # Define the set of required metric columns.
-    required_cols = {'tm', 'gc_content', 'hairpin_dg', 'homodimer_dg'}
-    if not required_cols.issubset(primers.columns):
-        print("Metrics not found, running evaluation...")
-        # Calculate metrics for each primer sequence.
-        metrics_df = primers['primer_sequence'].apply(Evaluate_Primers).apply(pd.Series)
-        # Join the new metrics back to the original primer data.
-        primers_with_metrics = primers.join(metrics_df)
-    else:
-        # If metrics are already present, just use the input DataFrame.
-        primers_with_metrics = primers
+#     # --- Evaluation Step ---
+#     # Define the set of required metric columns.
+#     required_cols = {'tm', 'gc_content', 'hairpin_dg', 'homodimer_dg'}
+#     if not required_cols.issubset(primers.columns):
+#         print("Metrics not found, running evaluation...")
+#         # Calculate metrics for each primer sequence.
+#         metrics_df = primers['primer_sequence'].apply(Evaluate_Primers).apply(pd.Series)
+#         # Join the new metrics back to the original primer data.
+#         primers_with_metrics = primers.join(metrics_df)
+#     else:
+#         # If metrics are already present, just use the input DataFrame.
+#         primers_with_metrics = primers
 
-    # --- Strict Filtering Logic ---
-    # Create a boolean mask where each condition must be True for a primer to pass.
-    strict_filter = (
-        primers_with_metrics['tm'].between(*tm_range) &
-        primers_with_metrics['gc_content'].between(*gc_range) &
-        (primers_with_metrics['hairpin_dg'] > hairpin_dg_min) &
-        (primers_with_metrics['homodimer_dg'] > homodimer_dg_min)
-    )
-    # Apply the mask to get the subset of primers that passed.
-    strict_results = primers_with_metrics[strict_filter]
+#     # --- Strict Filtering Logic ---
+#     # Create a boolean mask where each condition must be True for a primer to pass.
+#     strict_filter = (
+#         primers_with_metrics['tm'].between(*tm_range) &
+#         primers_with_metrics['gc_content'].between(*gc_range) &
+#         (primers_with_metrics['hairpin_dg'] > hairpin_dg_min) &
+#         (primers_with_metrics['homodimer_dg'] > homodimer_dg_min)
+#     )
+#     # Apply the mask to get the subset of primers that passed.
+#     strict_results = primers_with_metrics[strict_filter]
 
-    # If any primers passed the strict filter, add a 'filter_level' column and return them.
-    if not strict_results.empty:
-        return strict_results.assign(filter_level='strict')
+#     # If any primers passed the strict filter, add a 'filter_level' column and return them.
+#     if not strict_results.empty:
+#         return strict_results.assign(filter_level='strict')
 
-    # --- Fallback Logic ---
-    # If no primers passed strict and fallback is enabled, try again with relaxed criteria.
-    if use_fallback:
-        print("WARNING: No primers passed strict filtering. Applying relaxed criteria.")
-        # Create a new boolean mask with wider, more tolerant thresholds.
-        relaxed_filter = (
-            primers_with_metrics['tm'].between(tm_range[0] - 2.0, tm_range[1] + 2.0) &
-            primers_with_metrics['gc_content'].between(gc_range[0] - 5.0, gc_range[1] + 5.0) &
-            (primers_with_metrics['hairpin_dg'] > hairpin_dg_min - 2.0) &
-            (primers_with_metrics['homodimer_dg'] > homodimer_dg_min - 2.0)
-        )
-        # Apply the relaxed filter.
-        relaxed_results = primers_with_metrics[relaxed_filter]
+#     # --- Fallback Logic ---
+#     # If no primers passed strict and fallback is enabled, try again with relaxed criteria.
+#     if use_fallback:
+#         print("WARNING: No primers passed strict filtering. Applying relaxed criteria.")
+#         # Create a new boolean mask with wider, more tolerant thresholds.
+#         relaxed_filter = (
+#             primers_with_metrics['tm'].between(tm_range[0] - 2.0, tm_range[1] + 2.0) &
+#             primers_with_metrics['gc_content'].between(gc_range[0] - 5.0, gc_range[1] + 5.0) &
+#             (primers_with_metrics['hairpin_dg'] > hairpin_dg_min - 2.0) &
+#             (primers_with_metrics['homodimer_dg'] > homodimer_dg_min - 2.0)
+#         )
+#         # Apply the relaxed filter.
+#         relaxed_results = primers_with_metrics[relaxed_filter]
 
-        # If any primers passed the relaxed filter, return them.
-        if not relaxed_results.empty:
-            return relaxed_results.assign(filter_level='relaxed')
+#         # If any primers passed the relaxed filter, return them.
+#         if not relaxed_results.empty:
+#             return relaxed_results.assign(filter_level='relaxed')
 
-    # If no primers pass even the relaxed criteria, print a warning and return an empty DataFrame.
-    print("WARNING: No primers passed filtering, even with relaxed criteria.")
-    return pd.DataFrame()
+#     # If no primers pass even the relaxed criteria, print a warning and return an empty DataFrame.
+#     print("WARNING: No primers passed filtering, even with relaxed criteria.")
+#     return pd.DataFrame()
 
 
 def Generate_Allele_Specific_Primers(snps_list: list[dict], min_len: int = 18, max_len: int = 28) -> list[list[list[dict]]]:
@@ -246,20 +206,25 @@ def Make_Primers(seq, min_len, max_len, snp_id, allele, direction="forward") -> 
                 "allele": allele,
                 "primer_sequence": trimmed,
                 "direction": direction,
-                "length": seq_length-length
+                "length": seq_length-length,
+         # Use primer3's analysis functions instead of design_primers
+                
+                "tm" : primer3.bindings.calc_tm(trimmed),
+                "gc_content" : Calc_GC_Content(trimmed),
+                "hairpin_dg" : primer3.bindings.calc_hairpin(trimmed),
+                "homodimer_dg" : primer3.bindings.calc_homodimer(trimmed)
             }
-            primers.append(Evaluate_Primers(primary_primer))#Evaluate primers was built to handle one dictionary at a time. Adding it here saves time by avoiding an extra loop. 
-            #maybe avoid calling the function all together by passing Evaluate_Primers directly into make_primers
+            
     else:
         print(f"The length of your forward primer wasn't long enough. \nYou needed one at least {min_len} long and it ended up only being {seq_length}")
     return primers
 
 
 
-def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
-    """
-        Generate matching primers for top 5 allele-specific primers.
-        TODO: Optimize primer pairing.
-        - Use primer3-py's designPrimers for more efficient pairing.
-        - Add checks for primer pair compatibility (e.g., Tm difference < 5Â°C).
-        """
+# def Generate_Matching_Primers(snp_data: pd.DataFrame, allele_specific_primers: pd.DataFrame, min_dist: int = 100, max_dist: int = 500): # -> pd.DataFrame::
+#     """
+#         Generate matching primers for top 5 allele-specific primers.
+#         TODO: Optimize primer pairing.
+#         - Use primer3-py's designPrimers for more efficient pairing.
+#         - Add checks for primer pair compatibility (e.g., Tm difference < 5Â°C).
+#         """
